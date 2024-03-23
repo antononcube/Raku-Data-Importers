@@ -28,6 +28,13 @@ isa-ok
         "import URL with 'html'";
 
 ## 5
+my $url5 = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
+isa-ok
+        import-url($url5).trim.starts-with('data:image/'),
+        True,
+        "import image URL";
+
+## 6
 dies-ok { import-url($url1, format => 'data') }, "wrong prop spec, 'data'";
 
 
