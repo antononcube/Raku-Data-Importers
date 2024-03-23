@@ -1,0 +1,29 @@
+use v6.d;
+
+use lib <. lib>;
+
+use Data::Slurps;
+use Test;
+
+plan *;
+
+## 1
+my $file1 = $*CWD ~ '/resources/short.txt';
+ok import-file($file1);
+
+## 2
+my $file2 = $*CWD ~ '/resources/simple.json';
+ok import-file($file2);
+
+## 3
+my $file3 = $*CWD ~ '/resources/simple.csv';
+ok import-file($file3);
+
+## 4
+my $txt4 = q:to/END/;
+How mush is the fish?
+END
+is text-stats($txt4).all ~~ Pair:D, True, 'text-stats gives a list of pairs';
+
+
+done-testing;

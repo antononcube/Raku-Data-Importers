@@ -37,9 +37,6 @@ my $res = import-url($url, format => Whatever);
 
 $res.WHAT;
 ```
-```
-# (Hash)
-```
 
 Here is the deduced type:
 
@@ -47,7 +44,4 @@ Here is the deduced type:
 use Data::TypeSystem;
 
 deduce-type($res);
-```
-```
-# Struct([Arity, Categories, ContributedBy, Description, Keywords, Name, NamedArguments, PositionalArguments, PromptText, Topics, URL], [Int, Hash, Str, Str, Array, Str, Array, Hash, Str, Hash, Str])
 ```

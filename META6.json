@@ -1,0 +1,39 @@
+{
+  "name": "Data::Slurps",
+  "description": "Various data importing routines with a unified interface (slurp).",
+  "version": "0.1.0",
+  "perl": "6.d",
+  "authors": [
+    "Anton Antonov"
+  ],
+  "auth": "zef:antononcube",
+  "depends": [
+    "JSON::Fast:ver<0.19+>",
+    "URI:ver<0.3.7+>:auth<zef:raku-community-modules>",
+    "Image::Markup::Utilities:ver<0.1.1+>:auth<zef:antononcube>:api<0>",
+    "HTTP::Tiny:ver<0.2.5+>:auth<zef:jjatria>"
+  ],
+  "build-depends": [],
+  "test-depends": [],
+  "provides": {
+    "Data::Slurps": "lib/Data/Slurps.rakumod"
+  },
+  "resources": [
+    "simple.csv",
+    "simple.json",
+    "short.txt"
+  ],
+  "license": "Artistic-2.0",
+  "tags": [
+    "slurp",
+    "slurps",
+    "import",
+    "imports",
+    "data",
+    "url",
+    "plaintext",
+    "html"
+  ],
+  "api": "1",
+  "source-url": "https://github.com/antononcube/Raku-Data-Slurps.git"
+}
