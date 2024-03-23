@@ -10,7 +10,7 @@ plan *;
 ## 1
 my $url1 = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
 is
-        slurp($url1, format => 'json'),
+        slurp($url1),
         import-url($url1),
         'importing URL json';
 
@@ -21,6 +21,12 @@ is
         import-url($url2, format => 'text'),
         'importing URL text';
 
+## 3
+my $url3 = 'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/resources/dfRdatasets.csv';
+is
+        slurp($url3, headers => 'auto'),
+        import-url($url3, headers => 'auto'),
+        'importing URL csv';
 
 
 done-testing;
