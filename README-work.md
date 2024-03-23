@@ -45,3 +45,9 @@ use Data::TypeSystem;
 
 deduce-type($res);
 ```
+
+Using `slurp` instead of `import-url`:
+
+```perl6
+slurp($url)
+```
