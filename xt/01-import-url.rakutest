@@ -1,0 +1,34 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+
+use Data::Slurps;
+
+plan *;
+
+## 1
+#my $url1 = 'https://pypi.org/project/ChernoffFace/';
+my $url1 = 'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/README.md';
+ok import-url($url1), 'importing URL is fine';
+
+## 2
+isa-ok import-url($url1):p, Str:D;
+
+## 3
+isa-ok
+        import-url($url1, format => 'plaintext'),
+        Str:D,
+        "import URL with format => 'plaintext'";
+
+## 4
+isa-ok
+        import-url($url1, 'html').trim.starts-with('<!DOCTYPE html>'),
+        True,
+        "import URL with 'html'";
+
+## 5
+dies-ok { import-url($url1, format => 'data') }, "wrong prop spec, 'data'";
+
+
+done-testing;

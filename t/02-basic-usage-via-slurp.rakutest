@@ -1,0 +1,31 @@
+use v6.d;
+
+use lib <. lib>;
+
+use Data::Slurps;
+use Test;
+
+plan *;
+
+## 1
+my $file1 = $*CWD ~ '/resources/short.txt';
+is
+        slurp($file1, format => 'txt'),
+        import-file($file1),
+        'txt file equivalence';
+
+## 2
+my $file2 = $*CWD ~ '/resources/simple.json';
+is
+        slurp($file2, format => 'json'),
+        import-file($file2),
+        'json file equivalence';
+
+## 3
+my $file3 = $*CWD ~ '/resources/simple.csv';
+is
+        slurp($file3, format => 'csv'),
+        import-file($file3),
+        'csv file equivalence';
+
+done-testing;
