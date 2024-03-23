@@ -54,24 +54,34 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
     # Process format
     if $format.isa(Whatever) {
         $format = do given $url {
-            when $_ ~~ / '.csv' $ / { 'csv' }
-            when $_ ~~ / '.json' $ / { 'json' }
-            when $_ ~~ / '.txt' | '.text' $ / { 'plaintext' }
-            when $_ ~~ / '.xml' $ / { 'xml' }
+            when $_ ~~ /:i '.csv' $ / { 'csv' }
+            when $_ ~~ /:i '.json' $ / { 'json' }
+            when $_ ~~ /:i '.txt' | '.text' $ / { 'plaintext' }
+            when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
+            when $_ ~~ /:i '.xml' $ / { 'xml' }
             default { 'html' }
         }
     }
 
-    $format = do given $format {
-        when $_ ∈ <txt text> { 'plaintext' }
-        when $_ ∈ <img image png jpg> { 'image' }
-        default { $format }
+    if $format ~~ Str:D {
+        $format = do given $format {
+            when $_ ∈ <txt text> { 'plaintext' }
+            when $_ ∈ <img image png jpg jpeg> { 'image' }
+            when $_ ∈ <markdown-image md-image> { 'md-image' }
+            default { $format }
+        }
     }
 
-    my @expectedFormats = <csv html json plaintext xml>;
+    my @expectedFormats = <csv html image json md-image plaintext xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
+
+    # Delegate image ingestion
+    if $format ∈ <image md-image> {
+        if $format eq 'image' { $format = 'base_64'; }
+        return image-import($url, :$format);
+    }
 
     # Import URL content
     my $content = HTTP::Tiny.new.get($url)<content>.decode;
@@ -79,7 +89,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
     # Process
     return do given $format {
         when 'csv' {
-            my $csv-file = $*TMPDIR.child("temp-{(^10).pick(12).join}.csv");
+            my $csv-file = $*TMPDIR.child("temp-{ (^10).pick(12).join }.csv");
             $csv-file.spurt($content);
             return import-file($csv-file, format => 'csv', |%args);
         }
@@ -115,31 +125,34 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
     # Process format
     if $format.isa(Whatever) {
         $format = do given $file {
-            when $_ ~~ / '.json' $ / { 'json' }
-            when $_ ~~ / '.txt' | '.text' $ / { 'plaintext' }
-            when $_ ~~ / '.html' $ / { 'plaintext' }
-            when $_ ~~ / '.xml' $ / { 'xml' }
-            when $_ ~~ / '.csv' $ / { 'csv' }
-            when $_ ~~ / '.png' | '.jpg' $ / { 'image' }
+            when $_ ~~ /:i '.json' $ / { 'json' }
+            when $_ ~~ /:i '.txt' | '.text' $ / { 'plaintext' }
+            when $_ ~~ /:i '.html' $ / { 'plaintext' }
+            when $_ ~~ /:i '.xml' $ / { 'xml' }
+            when $_ ~~ /:i '.csv' $ / { 'csv' }
+            when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
             default { 'asis' }
         }
     }
 
-    $format = do given $format {
-        when $_ ∈ <txt text> { 'plaintext' }
-        when $_ ∈ <img image png jpg> { 'image' }
-        default { $format }
+    if $format ~~ Str:D {
+        $format = do given $format {
+            when $_ ∈ <txt text> { 'plaintext' }
+            when $_ ∈ <img image png jpg jpeg> { 'image' }
+            when $_ ∈ <markdown-image md-image> { 'md-image' }
+            default { $format }
+        }
     }
 
-    my @expectedFormats = <csv html image json plaintext xml>;
+    my @expectedFormats = <csv html image json md-image plaintext xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
 
     # Ingest
     return do given $format {
-        when 'image' {
-            return image-import($file, |%args);
+        when $_ ∈ <image md-image> {
+            return image-import($file, :$format, |%args);
         }
         when 'json' {
             return to-json(slurp($file));
