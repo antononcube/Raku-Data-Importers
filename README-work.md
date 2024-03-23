@@ -26,6 +26,8 @@ zef install https://github.com/antononcube/Raku-Data-Slurps.git
 
 ## Usage examples
 
+## JSON URLs
+
 Import a JSON file:
 
 ```perl6
@@ -50,4 +52,12 @@ Using `slurp` instead of `import-url`:
 
 ```perl6
 slurp($url)
+```
+
+### Image URL
+
+```perl6, results=asis
+my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
+
+import-url($imgURL, format => 'md-image')
 ```
