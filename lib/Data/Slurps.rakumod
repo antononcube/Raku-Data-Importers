@@ -88,8 +88,8 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
 }
 
 #-----------------------------------------------------------
-multi sub slurp($input where $input.&is-url, :$format = Whatever) {
-    return import-url($input, :$format);
+multi sub slurp($input where $input.&is-url, :$format = Whatever, *%args) is export {
+    return import-url($input, :$format, |%args);
 }
 
 #============================================================
@@ -143,7 +143,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
 }
 
 #-----------------------------------------------------------
-multi sub slurp($input where $input.IO.e, :$format!) {
+multi sub slurp($input where $input.IO.e, :$format!) is export {
     return import-file($input, :$format);
 }
 
