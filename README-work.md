@@ -63,3 +63,16 @@ my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main
 
 import-url($imgURL, format => 'md-image').substr(^100)
 ```
+
+### CSV URL
+
+Here we ingest a CSV file and show a table of a 10-rows sample:
+
+```perl6, results=asis
+use Data::Translators;
+
+'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/resources/dfRdatasets.csv'
+==> slurp(headers => 'auto') 
+==> { $_.pick(10).sort({ $_<Package Item> }) }()
+==> data-translation(field-names => <Package Item Title Rows Cols>)
+```

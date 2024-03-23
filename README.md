@@ -75,3 +75,17 @@ import-url($imgURL, format => 'md-image').substr(^100)
 ```
 # ![](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFBEVF
 ```
+
+### CSV URL
+
+Here we ingest a CSV file and show a table of a 10-rows sample:
+
+```perl6, results=asis
+use Data::Translators;
+
+'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/resources/dfRdatasets.csv'
+==> slurp(headers => 'auto') 
+==> { $_.pick(10).sort({ $_<Package Item> }) }()
+==> data-translation(field-names => <Package Item Title Rows Cols>)
+```
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>Ecdat</td><td>Mode</td><td>Mode Choice</td><td>453</td><td>9</td></tr><tr><td>HLMdiag</td><td>wages</td><td>Wages for male high school dropouts</td><td>6402</td><td>15</td></tr><tr><td>carData</td><td>Davis</td><td>Self-Reports of Height and Weight</td><td>200</td><td>5</td></tr><tr><td>carData</td><td>Highway1</td><td>Highway Accidents</td><td>39</td><td>12</td></tr><tr><td>fpp2</td><td>austourists</td><td>International Tourists to Australia: Total visitor nights.</td><td>68</td><td>2</td></tr><tr><td>fpp2</td><td>visnights</td><td>Quarterly visitor nights for various regions of Australia.</td><td>76</td><td>20</td></tr><tr><td>lattice</td><td>barley</td><td>Yield data from a Minnesota barley trial</td><td>120</td><td>4</td></tr><tr><td>lattice</td><td>ethanol</td><td>Engine exhaust fumes from burning ethanol</td><td>88</td><td>3</td></tr><tr><td>openintro</td><td>daycare_fines</td><td>Daycare fines</td><td>200</td><td>7</td></tr><tr><td>survival</td><td>transplant</td><td>Liver transplant waiting list</td><td>815</td><td>6</td></tr></tbody></table>
