@@ -21,7 +21,11 @@ sub text-stats(Str:D $txt) is export {
 #-----------------------------------------------------------
 
 sub is-url(Str $url -->Bool) {
-    return so(URI.new($url).grammar.parse-result<URI-reference><URI> // False);
+    try {
+        return so(URI.new($url).grammar.parse-result<URI-reference><URI> // False);
+    }
+    if !$ { return False; }
+    return False;
 }
 
 #-----------------------------------------------------------
@@ -52,10 +56,16 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         $format = do given $url {
             when $_ ~~ / '.csv' $ / { 'csv' }
             when $_ ~~ / '.json' $ / { 'json' }
-            when $_ ~~ / '.txt' $ / { 'plaintext' }
+            when $_ ~~ / '.txt' | '.text' $ / { 'plaintext' }
             when $_ ~~ / '.xml' $ / { 'xml' }
             default { 'html' }
         }
+    }
+
+    $format = do given $format {
+        when $_ ∈ <txt text> { 'plaintext' }
+        when $_ ∈ <img image png jpg> { 'image' }
+        default { $format }
     }
 
     my @expectedFormats = <csv html json plaintext xml>;
@@ -73,7 +83,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
             $csv-file.spurt($content);
             return import-file($csv-file, format => 'csv', |%args);
         }
-        when 'plaintext' {
+        when $_ eq 'plaintext' {
             $content .= subst(/ \v+ /, "\n", :g);
             strip-html($content);
         }
@@ -115,6 +125,17 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
+    $format = do given $format {
+        when $_ ∈ <txt text> { 'plaintext' }
+        when $_ ∈ <img image png jpg> { 'image' }
+        default { $format }
+    }
+
+    my @expectedFormats = <csv html image json plaintext xml>;
+    die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
+    unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
+    $format = $format.lc;
+
     # Ingest
     return do given $format {
         when 'image' {
@@ -133,7 +154,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
                 die 'Cannot import CSV file. Is "Text::CSV" installed?';
             }
         }
-        when $_ ∈ <plaintext asis> {
+        when $_ ∈ <plaintext text txt asis> {
             return slurp($file);
         }
         default {
