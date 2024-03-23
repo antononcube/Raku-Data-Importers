@@ -56,8 +56,10 @@ slurp($url)
 
 ### Image URL
 
-```perl6, results=asis
+Import an [image](https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg):
+
+```perl6
 my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
 
-import-url($imgURL, format => 'md-image')
+import-url($imgURL, format => 'md-image').substr(^100)
 ```
