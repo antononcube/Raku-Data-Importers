@@ -225,8 +225,9 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
 # import
 #============================================================
 
-#| Imports CSV, image, JSON, and text data from files and URLs.
+#| Imports URLs and files.
 #| Automatically deduces the data type from extensions.
+#| The recognized format types are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
 #| The format argument can be both named and positional.
 #| <$source> -- file or URL.
 #| <:$format> -- format of the data; if Whatever the extension is used to determine the format.

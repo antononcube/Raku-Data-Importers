@@ -3,13 +3,15 @@
 ## In brief
 
 This repository is for a Raku package for the ingestion of different types of data
-from both URLs and files.
+from both URLs and files. Automatically deduces the data type from extensions.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
 The corresponding function `data-import` can be also used.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name.
+
+(Currently) the recognized formats are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
 
 The functions `slurp` and `data-import` can work with:
 

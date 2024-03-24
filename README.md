@@ -3,13 +3,15 @@
 ## In brief
 
 This repository is for a Raku package for the ingestion of different types of data
-from both URLs and files.
+from both URLs and files. Automatically deduces the data type from extensions.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
 The corresponding function `data-import` can be also used.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name.
+
+(Currently) the recognized formats are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
 
 The functions `slurp` and `data-import` can work with:
 
@@ -142,7 +144,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>DAAG</td><td>cerealsugar</td><td>Percentage of Sugar in Breakfast Cereal</td><td>100</td><td>1</td></tr><tr><td>DAAG</td><td>softbacks</td><td>Measurements on a Selection of Paperback Books</td><td>8</td><td>2</td></tr><tr><td>MASS</td><td>Sitka</td><td>Growth Curves for Sitka Spruce Trees in 1988</td><td>395</td><td>4</td></tr><tr><td>Stat2Data</td><td>SugarEthanol</td><td>Effects of Oxygen on Sugar Metabolism</td><td>16</td><td>3</td></tr><tr><td>Stat2Data</td><td>TextPrices</td><td>Textbook Prices</td><td>30</td><td>2</td></tr><tr><td>datasets</td><td>anscombe</td><td>Anscombe&#39;s Quartet of &#39;Identical&#39; Simple Linear Regressions</td><td>11</td><td>8</td></tr><tr><td>fpp2</td><td>maxtemp</td><td>Maximum annual temperatures at Moorabbin Airport, Melbourne</td><td>46</td><td>2</td></tr><tr><td>geepack</td><td>respiratory</td><td>Data from a clinical trial comparing two treatments for a respiratory illness</td><td>444</td><td>8</td></tr><tr><td>openintro</td><td>penny_ages</td><td>Penny Ages</td><td>648</td><td>2</td></tr><tr><td>validate</td><td>samplonomy</td><td>Economic data on Samplonia</td><td>1199</td><td>5</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>Ecdat</td><td>Diamond</td><td>Pricing the C&#39;s of Diamond Stones</td><td>308</td><td>5</td></tr><tr><td>MASS</td><td>GAGurine</td><td>Level of GAG in Urine of Children</td><td>314</td><td>2</td></tr><tr><td>Stat2Data</td><td>Caterpillars</td><td>Measurements of Manduca Sexta Caterpillars</td><td>267</td><td>18</td></tr><tr><td>Stat2Data</td><td>FaithfulFaces</td><td>Faithfulness from a Photo?</td><td>170</td><td>7</td></tr><tr><td>nycflights13</td><td>flights</td><td>Flights data</td><td>336776</td><td>19</td></tr><tr><td>openintro</td><td>coast_starlight</td><td>Coast Starlight Amtrak train</td><td>16</td><td>3</td></tr><tr><td>openintro</td><td>hsb2</td><td>High School and Beyond survey</td><td>200</td><td>11</td></tr><tr><td>robustbase</td><td>wood</td><td>Modified Data on Wood Specific Gravity</td><td>20</td><td>6</td></tr><tr><td>stevedata</td><td>anes_partytherms</td><td>Major Party (Democrat, Republican) Thermometer Index Data (1978-2012)</td><td>33830</td><td>19</td></tr><tr><td>stevedata</td><td>usa_computers</td><td>Percentage of U.S. Households with Computer Access, by Year</td><td>19</td><td>2</td></tr></tbody></table>
 
 
 ### PDF URL
