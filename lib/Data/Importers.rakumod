@@ -1,4 +1,4 @@
-unit module Data::Slurps;
+unit module Data::Importers;
 
 use HTTP::Tiny;
 use Image::Markup::Utilities;
@@ -10,8 +10,13 @@ use URI;
 #============================================================
 
 #-----------------------------------------------------------
-sub text-stats(Str:D $txt) is export {
-    <chars words lines> Z=> [$txt.chars, $txt.words.elems, $txt.lines.elems]
+#| Text statistics routine similar to UNIX's wc.
+sub text-stats(Str:D $txt, Bool :p(:$pairs) = True) is export {
+    if $pairs {
+        <chars words lines> Z=> [$txt.chars, $txt.words.elems, $txt.lines.elems]
+    } else {
+        [$txt.chars, $txt.words.elems, $txt.lines.elems]
+    }
 }
 
 #============================================================
@@ -29,7 +34,7 @@ sub is-url(Str $url -->Bool) {
 }
 
 #-----------------------------------------------------------
-sub strip-html(Str $html) returns Str {
+sub strip-html(Str $html --> Str) {
 
     my $res = $html
             .subst(/'<style'.*?'</style>'/, :g)
@@ -43,7 +48,7 @@ sub strip-html(Str $html) returns Str {
 }
 
 #-----------------------------------------------------------
-proto sub import-url(Str $url, |) is export {*}
+proto sub import-url(Str $url, |) {*}
 
 multi sub import-url(Str $url, $format, *%args) {
     return import-url($url, :$format, |%args);
@@ -110,15 +115,10 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
     }
 }
 
-#-----------------------------------------------------------
-multi sub slurp($input where $input.&is-url, :$format = Whatever, *%args) is export {
-    return import-url($input, :$format, |%args);
-}
-
 #============================================================
 # File import
 #============================================================
-proto sub import-file($file, |) is export {*}
+proto sub import-file($file, |) {*}
 
 multi sub import-file(Str $file, :$format is copy = Whatever, *%args) {
     return import-file($file.IO, :$format, |%args);
@@ -179,15 +179,38 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
     }
 }
 
-#-----------------------------------------------------------
-multi sub slurp($input where $input.IO.e, :$format!, *%args) is export {
-    return import-file($input, :$format, |%args);
+
+#============================================================
+# import
+#============================================================
+
+#| Imports CSV, image, JSON, and text data from files and URLs.
+#| Automatically deduces the data type from extensions.
+#| The format argument can be both named and positional.
+#| <$source> -- file or URL.
+#| <:$format> -- format of the data; if Whatever the extension is used to determine the format.
+proto sub import($source, |) is export {*}
+
+multi sub import($source, $format, *%args) {
+    return import($source, :$format, |%args);
+}
+
+multi sub import($source where $source.IO.e, :$format = Whatever, *%args) {
+    return import-file($source, :$format, |%args);
+}
+
+multi sub import($source where $source.&is-url, :$format = Whatever, *%args) {
+    return import-url($source, :$format, |%args);
 }
 
 #============================================================
-# Image import
+# slurp
 #============================================================
 
-#============================================================
-# CSV import
-#============================================================
+multi sub slurp($source where $source.IO.e, :$format!, *%args) is export {
+    return import-file($source, :$format, |%args);
+}
+
+multi sub slurp($source where $source.&is-url, :$format = Whatever, *%args) is export {
+    return import-url($source, :$format, |%args);
+}

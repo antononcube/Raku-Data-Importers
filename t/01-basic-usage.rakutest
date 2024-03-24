@@ -2,22 +2,22 @@ use v6.d;
 
 use lib <. lib>;
 
-use Data::Slurps;
+use Data::Importers;
 use Test;
 
 plan *;
 
 ## 1
 my $file1 = $*CWD ~ '/resources/short.txt';
-ok import-file($file1);
+ok import($file1);
 
 ## 2
 my $file2 = $*CWD ~ '/resources/simple.json';
-ok import-file($file2);
+ok import($file2);
 
 ## 3
 my $file3 = $*CWD ~ '/resources/simple.csv';
-ok import-file($file3);
+ok import($file3);
 
 ## 4
 my $txt4 = q:to/END/;

@@ -1,7 +1,7 @@
 {
-  "name": "Data::Slurps",
-  "description": "Various data importing routines with a unified interface (slurp).",
-  "version": "0.1.1",
+  "name": "Data::Importers",
+  "description": "Various data importing routines with a unified interface (import and slurp).",
+  "version": "0.1.0",
   "perl": "6.d",
   "authors": [
     "Anton Antonov"
@@ -16,7 +16,7 @@
   "build-depends": [],
   "test-depends": [],
   "provides": {
-    "Data::Slurps": "lib/Data/Slurps.rakumod"
+    "Data::Importers": "lib/Data/Importers.rakumod"
   },
   "resources": [
     "simple.csv",
@@ -35,5 +35,5 @@
     "html"
   ],
   "api": "1",
-  "source-url": "https://github.com/antononcube/Raku-Data-Slurps.git"
+  "source-url": "https://github.com/antononcube/Raku-Data-Importers.git"
 }

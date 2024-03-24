@@ -1,4 +1,4 @@
-# Data::Slurps
+# Data::Importers
 
 ## In brief
 
@@ -6,7 +6,7 @@ This repository is for a Raku package for the ingestion of different types of da
 from both URLs and files.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding functions `import-url` and `import-file` can be also used.
+The corresponding function `import` can be also used.
 
 **Remark:** The slurp / import functions can work with CSV files if 
 ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1],
@@ -22,7 +22,7 @@ If `format => Whatever` then the format of the data is implied by the extension 
 From Zef' ecosystem:
 
 ```
-zef install Data::Slurps
+zef install Data::Importers
 ```
 
 From GitHub:
@@ -41,15 +41,15 @@ has to be specified:
 ### JSON file
 
 ```perl6
-use Data::Slurps;
+use Data::Importers;
 
 slurp($*CWD ~ '/resources/simple.json', format => 'json')
 ```
 
-Instead of `slurp` the function `import-file` can be used (no need to use "format"):
+Instead of `slurp` the function `import` can be used (no need to use "format"):
 
 ```perl6
-import-file($*CWD ~ '/resources/simple.json')
+import($*CWD ~ '/resources/simple.json')
 ```
 
 ### CSV file
@@ -69,7 +69,7 @@ Import a JSON file:
 ```perl6
 my $url = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
 
-my $res = import-url($url, format => Whatever);
+my $res = import($url, format => Whatever);
 
 $res.WHAT;
 ```
@@ -82,7 +82,7 @@ use Data::TypeSystem;
 deduce-type($res);
 ```
 
-Using `slurp` instead of `import-url`:
+Using `slurp` instead of `import`:
 
 ```perl6
 slurp($url)
@@ -95,7 +95,7 @@ Import an [image](https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/
 ```perl6
 my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
 
-import-url($imgURL, format => 'md-image').substr(^100)
+import($imgURL, format => 'md-image').substr(^100)
 ```
 
 **Remark:** Image ingestion is delegated to 

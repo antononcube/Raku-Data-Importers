@@ -1,4 +1,4 @@
-# Data::Slurps
+# Data::Importers
 
 ## In brief
 
@@ -6,7 +6,7 @@ This repository is for a Raku package for the ingestion of different types of da
 from both URLs and files.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding functions `import-url` and `import-file` can be also used.
+The corresponding function `import` can be also used.
 
 **Remark:** The slurp / import functions can work with CSV files if 
 ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1],
@@ -22,7 +22,7 @@ If `format => Whatever` then the format of the data is implied by the extension 
 From Zef' ecosystem:
 
 ```
-zef install Data::Slurps
+zef install Data::Importers
 ```
 
 From GitHub:
@@ -41,7 +41,7 @@ has to be specified:
 ### JSON file
 
 ```perl6
-use Data::Slurps;
+use Data::Importers;
 
 slurp($*CWD ~ '/resources/simple.json', format => 'json')
 ```
@@ -49,10 +49,10 @@ slurp($*CWD ~ '/resources/simple.json', format => 'json')
 # {name => ingrid, value => 1}
 ```
 
-Instead of `slurp` the function `import-file` can be used (no need to use "format"):
+Instead of `slurp` the function `import` can be used (no need to use "format"):
 
 ```perl6
-import-file($*CWD ~ '/resources/simple.json')
+import($*CWD ~ '/resources/simple.json')
 ```
 ```
 # {name => ingrid, value => 1}
@@ -78,7 +78,7 @@ Import a JSON file:
 ```perl6
 my $url = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
 
-my $res = import-url($url, format => Whatever);
+my $res = import($url, format => Whatever);
 
 $res.WHAT;
 ```
@@ -97,7 +97,7 @@ deduce-type($res);
 # Struct([Arity, Categories, ContributedBy, Description, Keywords, Name, NamedArguments, PositionalArguments, PromptText, Topics, URL], [Int, Hash, Str, Str, Array, Str, Array, Hash, Str, Hash, Str])
 ```
 
-Using `slurp` instead of `import-url`:
+Using `slurp` instead of `import`:
 
 ```perl6
 slurp($url)
@@ -113,7 +113,7 @@ Import an [image](https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/
 ```perl6
 my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
 
-import-url($imgURL, format => 'md-image').substr(^100)
+import($imgURL, format => 'md-image').substr(^100)
 ```
 ```
 # ![](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFBEVF
@@ -135,7 +135,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>COUNT</td><td>lbw</td><td>lbw</td><td>189</td><td>10</td></tr><tr><td>Ecdat</td><td>Workinghours</td><td>Wife Working Hours</td><td>3382</td><td>12</td></tr><tr><td>HSAUR</td><td>polyps3</td><td>Familial Andenomatous Polyposis</td><td>22</td><td>5</td></tr><tr><td>HistData</td><td>GaltonFamilies</td><td>Galton&#39;s data on the heights of parents and their children, by child</td><td>934</td><td>8</td></tr><tr><td>carData</td><td>Robey</td><td>Fertility and Contraception</td><td>50</td><td>3</td></tr><tr><td>datasets</td><td>USAccDeaths</td><td>Accidental Deaths in the US 1973-1978</td><td>72</td><td>2</td></tr><tr><td>datasets</td><td>longley</td><td>Longley&#39;s Economic Regression Data</td><td>16</td><td>7</td></tr><tr><td>fpp2</td><td>elecdaily</td><td>Half-hourly and daily electricity demand for Victoria, Australia, in 2014</td><td>365</td><td>3</td></tr><tr><td>mosaicData</td><td>SAT</td><td>State by State SAT data</td><td>50</td><td>8</td></tr><tr><td>openintro</td><td>exam_grades</td><td>Exam and course grades for statistics students</td><td>233</td><td>6</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>ArgentinaCPI</td><td>Consumer Price Index in Argentina</td><td>80</td><td>2</td></tr><tr><td>Ecdat</td><td>ModeChoice</td><td>Data to Study Travel Mode Choice</td><td>840</td><td>7</td></tr><tr><td>KMsurv</td><td>kidtran</td><td>data from Section 1.7</td><td>863</td><td>6</td></tr><tr><td>MASS</td><td>Aids2</td><td>Australian AIDS Survival Data</td><td>2843</td><td>7</td></tr><tr><td>Stat2Data</td><td>SuicideChina</td><td>Suicide Attempts in Shandong, China</td><td>2571</td><td>11</td></tr><tr><td>boot</td><td>beaver</td><td>Beaver Body Temperature Data</td><td>100</td><td>4</td></tr><tr><td>boot</td><td>motor</td><td>Data from a Simulated Motorcycle Accident</td><td>94</td><td>4</td></tr><tr><td>openintro</td><td>gifted</td><td>Analytical skills of young gifted children</td><td>36</td><td>8</td></tr><tr><td>openintro</td><td>mlb</td><td>Salary data for Major League Baseball (2010)</td><td>828</td><td>4</td></tr><tr><td>robustbase</td><td>hbk</td><td>Hawkins, Bradu, Kass&#39;s Artificial Data</td><td>75</td><td>4</td></tr></tbody></table>
 
 
 ----- 

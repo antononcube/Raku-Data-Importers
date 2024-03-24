@@ -3,39 +3,39 @@ use Test;
 
 use lib <. lib>;
 
-use Data::Slurps;
+use Data::Importers;
 
 plan *;
 
 ## 1
 #my $url1 = 'https://pypi.org/project/ChernoffFace/';
 my $url1 = 'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/README.md';
-ok import-url($url1), 'importing URL is fine';
+ok import($url1), 'importing URL is fine';
 
 ## 2
-isa-ok import-url($url1):p, Str:D;
+isa-ok import($url1, 'plaintext'), Str:D;
 
 ## 3
 isa-ok
-        import-url($url1, format => 'plaintext'),
+        import($url1, format => 'plaintext'),
         Str:D,
         "import URL with format => 'plaintext'";
 
 ## 4
 isa-ok
-        import-url($url1, 'html').trim.starts-with('<!DOCTYPE html>'),
+        import($url1, 'html').trim.starts-with('<!DOCTYPE html>'),
         True,
         "import URL with 'html'";
 
 ## 5
 my $url5 = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
 isa-ok
-        import-url($url5).trim.starts-with('data:image/'),
+        import($url5).trim.starts-with('data:image/'),
         True,
         "import image URL";
 
 ## 6
-dies-ok { import-url($url1, format => 'data') }, "wrong prop spec, 'data'";
+dies-ok { import($url1, format => 'data') }, "wrong prop spec, 'data'";
 
 
 done-testing;
