@@ -135,8 +135,47 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>DAAG</td><td>ant111b</td><td>Averages by block of corn yields, for treatment 111 only</td><td>32</td><td>9</td></tr><tr><td>HSAUR</td><td>Lanza</td><td>Prevention of Gastointestinal Damages</td><td>198</td><td>3</td></tr><tr><td>Stat2Data</td><td>Olives</td><td>Fenthion in Olive Oil</td><td>18</td><td>7</td></tr><tr><td>Stat2Data</td><td>Retirement</td><td>Yearly Contributions to a Supplemental Retirement Account</td><td>16</td><td>2</td></tr><tr><td>asaur</td><td>hepatoCellular</td><td>hepatoCellular</td><td>227</td><td>48</td></tr><tr><td>openintro</td><td>nba_heights</td><td>NBA Player heights from 2008-9</td><td>435</td><td>4</td></tr><tr><td>robustbase</td><td>NOxEmissions</td><td>NOx Air Pollution Data</td><td>8088</td><td>4</td></tr><tr><td>stevedata</td><td>mm_mlda</td><td>Minimum Legal Drinking Age Fatalities Data</td><td>50</td><td>19</td></tr><tr><td>stevedata</td><td>usa_tradegdp</td><td>U.S. Trade and GDP, 1790-2018</td><td>229</td><td>5</td></tr><tr><td>survival</td><td>diabetic</td><td>Ddiabetic retinopathy</td><td>394</td><td>8</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>NaturalGas</td><td>Natural Gas Data</td><td>138</td><td>10</td></tr><tr><td>Ecdat</td><td>Mpyr</td><td>Money, National Product and Interest Rate</td><td>90</td><td>4</td></tr><tr><td>Ecdat</td><td>SP500</td><td>Returns on Standard &amp; Poor&#39;s 500 Index</td><td>2783</td><td>1</td></tr><tr><td>Ecdat</td><td>Star</td><td>Effects on Learning of Small Class Sizes</td><td>5748</td><td>8</td></tr><tr><td>Stat2Data</td><td>OilDeapsorbtion</td><td>Effect of Ultrasound on Oil Deapsorbtion</td><td>40</td><td>4</td></tr><tr><td>datasets</td><td>stackloss</td><td>Brownlee&#39;s Stack Loss Plant Data</td><td>21</td><td>4</td></tr><tr><td>fpp2</td><td>maxtemp</td><td>Maximum annual temperatures at Moorabbin Airport, Melbourne</td><td>46</td><td>2</td></tr><tr><td>gap</td><td>cf</td><td>Internal functions for gap</td><td>186</td><td>24</td></tr><tr><td>robustbase</td><td>epilepsy</td><td>Epilepsy Attacks Data Set</td><td>59</td><td>11</td></tr><tr><td>texmex</td><td>winter</td><td>Air pollution data, separately for summer and winter months</td><td>532</td><td>5</td></tr></tbody></table>
 
+
+### PDF URL
+
+Here is an example of importing a PDF file into plain text:
+
+```perl6
+my $txt = slurp('https://pdfobject.com/pdf/sample.pdf', format=>'text');
+
+say text-stats($txt);
+```
+```
+# (chars => 2851 words => 416 lines => 38)
+```
+
+Here is a smple of the imported text:
+
+```perl6
+$txt.lines[^6].join("\n")
+```
+```
+# Sample PDF
+# This is a simple PDF file. Fun fun fun.
+# Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus facilisis odio sed mi.
+# Curabitur suscipit. Nullam vel nisi. Etiam semper ipsum ut lectus. Proin aliquam, erat eget
+# pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit.
+# Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus.
+```
+
+-----
+
+## TODO
+
+- [X] DONE Development
+  - [X] DONE PDF ingestion
+    - [X] DONE Files 
+    - [X] DONE URLs 
+- [ ] TODO Unit tests
+  - [ ] TODO PDF ingestion
+    - Some initial tests are put in.
 
 ----- 
 

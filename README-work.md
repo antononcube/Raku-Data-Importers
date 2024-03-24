@@ -115,6 +115,34 @@ use Data::Translators;
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
 
+### PDF URL
+
+Here is an example of importing a PDF file into plain text:
+
+```perl6
+my $txt = slurp('https://pdfobject.com/pdf/sample.pdf', format=>'text');
+
+say text-stats($txt);
+```
+
+Here is a smple of the imported text:
+
+```perl6
+$txt.lines[^6].join("\n")
+```
+
+-----
+
+## TODO
+
+- [X] DONE Development
+  - [X] DONE PDF ingestion
+    - [X] DONE Files 
+    - [X] DONE URLs 
+- [ ] TODO Unit tests
+  - [ ] TODO PDF ingestion
+    - Some initial tests are put in.
+
 ----- 
 
 ## References
