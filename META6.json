@@ -1,7 +1,7 @@
 {
   "name": "Data::Slurps",
   "description": "Various data importing routines with a unified interface (slurp).",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "perl": "6.d",
   "authors": [
     "Anton Antonov"
