@@ -56,7 +56,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         $format = do given $url {
             when $_ ~~ /:i '.csv' $ / { 'csv' }
             when $_ ~~ /:i '.json' $ / { 'json' }
-            when $_ ~~ /:i '.txt' | '.text' $ / { 'plaintext' }
+            when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
             when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
             default { 'html' }
@@ -72,7 +72,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <csv html image json md-image plaintext xml>;
+    my @expectedFormats = <csv html image json md-image plaintext text xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -103,7 +103,10 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         when 'xml' {
             die 'XML import is not implemented yet.';
         }
-        default { $content }
+        default {
+            # Here goes 'asis' also
+            $content
+        }
     }
 }
 
@@ -126,7 +129,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
     if $format.isa(Whatever) {
         $format = do given $file {
             when $_ ~~ /:i '.json' $ / { 'json' }
-            when $_ ~~ /:i '.txt' | '.text' $ / { 'plaintext' }
+            when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
             when $_ ~~ /:i '.html' $ / { 'plaintext' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
             when $_ ~~ /:i '.csv' $ / { 'csv' }
@@ -144,7 +147,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <csv html image json md-image plaintext xml>;
+    my @expectedFormats = <csv html image json md-image plaintext text xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
