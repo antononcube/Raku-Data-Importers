@@ -5,6 +5,14 @@
 This repository is for a Raku (data) package for the ingestion of data of different types of data
 from both URLs and files.
 
+**Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
+The corresponding functions `import-url` and `import-file` can also used.
+
+**Remark:** The slurp / import functions can work with CSV files if "Text::CSV" is installed.
+Since "Text::CSV" is a "heavy to install" package, it is not included in the dependencies of this one.
+
+The format of the data of the URLs or files can be specified with the named argument "format".
+If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name. 
 
 ----
 
@@ -24,15 +32,49 @@ zef install https://github.com/antononcube/Raku-Data-Slurps.git
 
 -----
 
-## Usage examples
+## File examples
+
+In order to use the `slurp` definitions of this package the named argument "format" 
+has to be specified:  
+
+### JSON file
+
+```perl6
+use Data::Slurps;
+
+slurp($*CWD ~ '/resources/simple.json', format => 'json')
+```
+```
+# {name => ingrid, value => 1}
+```
+
+Instead of `slurp` the function `import-file` can be used (no need to use "format"):
+
+```perl6
+import-file($*CWD ~ '/resources/simple.json')
+```
+```
+# {name => ingrid, value => 1}
+```
+
+### CSV file
+
+```perl6
+slurp($*CWD ~ '/resources/simple.csv', format => 'csv', headers => 'auto')
+```
+```
+# [{X1 => 1, X2 => A, X3 => Cold} {X1 => 2, X2 => B, X3 => Warm} {X1 => 3, X2 => C, X3 => Hot}]
+```
+
+-----
+
+## URLs examples
 
 ## JSON URLs
 
 Import a JSON file:
 
 ```perl6
-use Data::Slurps;
-
 my $url = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
 
 my $res = import-url($url, format => Whatever);
@@ -76,6 +118,10 @@ import-url($imgURL, format => 'md-image').substr(^100)
 # ![](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFBEVF
 ```
 
+**Remark:** Image ingestion is delegated to 
+["Image::Markup::Utilities"](https://raku.land/zef:antononcube/Image::Markup::Utilities), [AAp1].
+The format value 'md-image' can be used to display images in Markdown files or Jupyter notebooks.
+
 ### CSV URL
 
 Here we ingest a CSV file and show a table of a 10-rows sample:
@@ -88,4 +134,14 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>Ecdat</td><td>Mode</td><td>Mode Choice</td><td>453</td><td>9</td></tr><tr><td>HLMdiag</td><td>wages</td><td>Wages for male high school dropouts</td><td>6402</td><td>15</td></tr><tr><td>carData</td><td>Davis</td><td>Self-Reports of Height and Weight</td><td>200</td><td>5</td></tr><tr><td>carData</td><td>Highway1</td><td>Highway Accidents</td><td>39</td><td>12</td></tr><tr><td>fpp2</td><td>austourists</td><td>International Tourists to Australia: Total visitor nights.</td><td>68</td><td>2</td></tr><tr><td>fpp2</td><td>visnights</td><td>Quarterly visitor nights for various regions of Australia.</td><td>76</td><td>20</td></tr><tr><td>lattice</td><td>barley</td><td>Yield data from a Minnesota barley trial</td><td>120</td><td>4</td></tr><tr><td>lattice</td><td>ethanol</td><td>Engine exhaust fumes from burning ethanol</td><td>88</td><td>3</td></tr><tr><td>openintro</td><td>daycare_fines</td><td>Daycare fines</td><td>200</td><td>7</td></tr><tr><td>survival</td><td>transplant</td><td>Liver transplant waiting list</td><td>815</td><td>6</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>CigarettesSW</td><td>Cigarette Consumption Panel Data</td><td>96</td><td>9</td></tr><tr><td>DAAG</td><td>geophones</td><td>Seismic Timing Data</td><td>56</td><td>2</td></tr><tr><td>HistData</td><td>Guerry</td><td>Data from A.-M. Guerry, &quot;Essay on the Moral Statistics of France&quot;</td><td>86</td><td>23</td></tr><tr><td>HistData</td><td>Snow.streets</td><td>John Snow&#39;s Map and Data on the 1854 London Cholera Outbreak</td><td>1241</td><td>4</td></tr><tr><td>Stat2Data</td><td>SeaSlugs</td><td>Sea Slug Larvae</td><td>36</td><td>2</td></tr><tr><td>boot</td><td>poisons</td><td>Animal Survival Times</td><td>48</td><td>3</td></tr><tr><td>openintro</td><td>gear_company</td><td>Fake data for a gear company example</td><td>2000</td><td>2</td></tr><tr><td>psych</td><td>Holzinger</td><td>Seven data sets showing a bifactor solution.</td><td>14</td><td>14</td></tr><tr><td>survival</td><td>tobin</td><td>Tobin&#39;s Tobit data</td><td>20</td><td>3</td></tr><tr><td>vcd</td><td>MSPatients</td><td>Diagnosis of Multiple Sclerosis</td><td>4</td><td>8</td></tr></tbody></table>
+
+
+----- 
+
+## References
+
+[AAp1] Anton Antonov,
+[Image::Markup::Utilities Raku package](https://github.com/antononcube/Raku-Image-Markup-Utilities),
+(2023),
+[GitHub/antononcube](https://github.com/antononcube).
