@@ -55,6 +55,8 @@ multi sub import-url(Str $url, $format, *%args) {
 }
 
 multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
+    # Extension
+    my $ext = do with $url.match(/ '.' (\w+) $/) { $0.Str.lc };
 
     # Process format
     if $format.isa(Whatever) {
@@ -62,6 +64,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
             when $_ ~~ /:i '.csv' $ / { 'csv' }
             when $_ ~~ /:i '.json' $ / { 'json' }
             when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
+            when $_ ~~ /:i '.pdf' $ / { 'text' }
             when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
             default { 'html' }
@@ -89,7 +92,17 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
     }
 
     # Import URL content
-    my $content = HTTP::Tiny.new.get($url)<content>.decode;
+    my $content = HTTP::Tiny.new.get($url)<content>;
+
+    # Delegate PDF ingestion
+    if $ext eq 'pdf' && $format ne 'asis' {
+        my $pdf-file = $*TMPDIR.child("temp-{ (^10).pick(12).join }.pdf");
+        $pdf-file.spurt($content);
+        return import-file($pdf-file, :$format, |%args);
+    }
+
+    # Decode
+    $content .= decode;
 
     # Process
     return do given $format {
@@ -125,11 +138,15 @@ multi sub import-file(Str $file, :$format is copy = Whatever, *%args) {
 }
 
 multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
+    # Extension
+    my $ext = do with $file.match(/ '.' (\w+) $/) { $0.Str.lc };
+
     # Process format
     if $format.isa(Whatever) {
         $format = do given $file {
             when $_ ~~ /:i '.json' $ / { 'json' }
             when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
+            when $_ ~~ /:i '.pdf' $ / { 'text' }
             when $_ ~~ /:i '.html' $ / { 'plaintext' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
             when $_ ~~ /:i '.csv' $ / { 'csv' }
@@ -168,6 +185,30 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             if $! {
                 note $!.^name;
                 die 'Cannot import CSV file. Is "Text::CSV" installed?';
+            }
+        }
+        when $ext.lc eq 'pdf' && $_ ∈ <plaintext text txt html xml> {
+            try {
+                use PDF::Extract;
+
+                my $extract = Extract.new(file => $file.subst(/(\s)/, { '\\' ~ $0.Str }):g);
+
+                when $_ ∈ <plaintext text txt> {
+                    return $extract.text;
+                }
+                when $_ ∈ <html> {
+                    return $extract.html;
+                }
+                when $_ ∈ <xml> {
+                    return $extract.xml;
+                }
+                default {
+                    die "Do not know what to do with the specified format for the a file with extension <pdf>.";
+                }
+            }
+            if $! {
+                note $!.^name;
+                die 'Cannot import PDF file. Is "PDF::Extract" installed?';
             }
         }
         when $_ ∈ <plaintext text txt asis> {
