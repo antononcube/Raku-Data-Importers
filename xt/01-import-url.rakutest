@@ -35,6 +35,13 @@ isa-ok
         "import image URL";
 
 ## 6
+my $url6 = 'https://pdfobject.com/pdf/sample.pdf';
+isa-ok
+        import($url6),
+        Str,
+        "import PDF URL";
+
+## 7
 dies-ok { import($url1, format => 'data') }, "wrong prop spec, 'data'";
 
 
