@@ -2,14 +2,15 @@
 
 ## In brief
 
-This repository is for a Raku (data) package for the ingestion of data of different types of data
+This repository is for a Raku package for the ingestion of different types of data
 from both URLs and files.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding functions `import-url` and `import-file` can also used.
+The corresponding functions `import-url` and `import-file` can be also used.
 
-**Remark:** The slurp / import functions can work with CSV files if "Text::CSV" is installed.
-Since "Text::CSV" is a "heavy to install" package, it is not included in the dependencies of this one.
+**Remark:** The slurp / import functions can work with CSV files if 
+["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1],
+is installed. Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name. 
@@ -134,7 +135,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>CigarettesSW</td><td>Cigarette Consumption Panel Data</td><td>96</td><td>9</td></tr><tr><td>DAAG</td><td>geophones</td><td>Seismic Timing Data</td><td>56</td><td>2</td></tr><tr><td>HistData</td><td>Guerry</td><td>Data from A.-M. Guerry, &quot;Essay on the Moral Statistics of France&quot;</td><td>86</td><td>23</td></tr><tr><td>HistData</td><td>Snow.streets</td><td>John Snow&#39;s Map and Data on the 1854 London Cholera Outbreak</td><td>1241</td><td>4</td></tr><tr><td>Stat2Data</td><td>SeaSlugs</td><td>Sea Slug Larvae</td><td>36</td><td>2</td></tr><tr><td>boot</td><td>poisons</td><td>Animal Survival Times</td><td>48</td><td>3</td></tr><tr><td>openintro</td><td>gear_company</td><td>Fake data for a gear company example</td><td>2000</td><td>2</td></tr><tr><td>psych</td><td>Holzinger</td><td>Seven data sets showing a bifactor solution.</td><td>14</td><td>14</td></tr><tr><td>survival</td><td>tobin</td><td>Tobin&#39;s Tobit data</td><td>20</td><td>3</td></tr><tr><td>vcd</td><td>MSPatients</td><td>Diagnosis of Multiple Sclerosis</td><td>4</td><td>8</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>COUNT</td><td>lbw</td><td>lbw</td><td>189</td><td>10</td></tr><tr><td>Ecdat</td><td>Workinghours</td><td>Wife Working Hours</td><td>3382</td><td>12</td></tr><tr><td>HSAUR</td><td>polyps3</td><td>Familial Andenomatous Polyposis</td><td>22</td><td>5</td></tr><tr><td>HistData</td><td>GaltonFamilies</td><td>Galton&#39;s data on the heights of parents and their children, by child</td><td>934</td><td>8</td></tr><tr><td>carData</td><td>Robey</td><td>Fertility and Contraception</td><td>50</td><td>3</td></tr><tr><td>datasets</td><td>USAccDeaths</td><td>Accidental Deaths in the US 1973-1978</td><td>72</td><td>2</td></tr><tr><td>datasets</td><td>longley</td><td>Longley&#39;s Economic Regression Data</td><td>16</td><td>7</td></tr><tr><td>fpp2</td><td>elecdaily</td><td>Half-hourly and daily electricity demand for Victoria, Australia, in 2014</td><td>365</td><td>3</td></tr><tr><td>mosaicData</td><td>SAT</td><td>State by State SAT data</td><td>50</td><td>8</td></tr><tr><td>openintro</td><td>exam_grades</td><td>Exam and course grades for statistics students</td><td>233</td><td>6</td></tr></tbody></table>
 
 
 ----- 
@@ -145,3 +146,8 @@ use Data::Translators;
 [Image::Markup::Utilities Raku package](https://github.com/antononcube/Raku-Image-Markup-Utilities),
 (2023),
 [GitHub/antononcube](https://github.com/antononcube).
+
+[HMBp1] H. Merijn Brand,
+[Text::CSV Raku package](https://github.com/Tux/CSV),
+(2015-2023),
+[GitHub/Tux](https://github.com/Tux).   

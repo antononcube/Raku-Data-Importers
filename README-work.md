@@ -2,14 +2,15 @@
 
 ## In brief
 
-This repository is for a Raku (data) package for the ingestion of data of different types of data
+This repository is for a Raku package for the ingestion of different types of data
 from both URLs and files.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding functions `import-url` and `import-file` can also used.
+The corresponding functions `import-url` and `import-file` can be also used.
 
-**Remark:** The slurp / import functions can work with CSV files if "Text::CSV" is installed.
-Since "Text::CSV" is a "heavy to install" package, it is not included in the dependencies of this one.
+**Remark:** The slurp / import functions can work with CSV files if 
+["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1],
+is installed. Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name. 
@@ -122,3 +123,8 @@ use Data::Translators;
 [Image::Markup::Utilities Raku package](https://github.com/antononcube/Raku-Image-Markup-Utilities),
 (2023),
 [GitHub/antononcube](https://github.com/antononcube).
+
+[HMBp1] H. Merijn Brand,
+[Text::CSV Raku package](https://github.com/Tux/CSV),
+(2015-2023),
+[GitHub/Tux](https://github.com/Tux).   
