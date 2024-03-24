@@ -158,7 +158,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             return image-import($file, :$format, |%args);
         }
         when 'json' {
-            return to-json(slurp($file));
+            return from-json(slurp($file));
         }
         when 'csv' {
             try {
@@ -180,8 +180,8 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
 }
 
 #-----------------------------------------------------------
-multi sub slurp($input where $input.IO.e, :$format!) is export {
-    return import-file($input, :$format);
+multi sub slurp($input where $input.IO.e, :$format!, *%args) is export {
+    return import-file($input, :$format, |%args);
 }
 
 #============================================================
