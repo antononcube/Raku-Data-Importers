@@ -10,10 +10,10 @@ say 'Using URL import';
 say '-' x 120;
 
 my $url = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
-say import($url);
+say data-import($url);
 
 my $url2 = 'https://raw.githubusercontent.com/antononcube/Raku-Data-ExampleDatasets/main/resources/dfRdatasets.csv';
-my $data = import($url2, headers => 'auto');
+my $data = data-import($url2, headers => 'auto');
 
 say $data.WHAT;
 say deduce-type($data);

@@ -6,14 +6,21 @@ This repository is for a Raku package for the ingestion of different types of da
 from both URLs and files.
 
 **Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding function `import` can be also used.
-
-**Remark:** The slurp / import functions can work with CSV files if 
-["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1],
-is installed. Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
+The corresponding function `data-import` can be also used.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
-If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name. 
+If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name.
+
+The functions `slurp` and `data-import` can work with:
+
+- CSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
+
+- PDF files if ["PDF::Extract"](https://raku.land/zef:Tux/PDF::Extract), [SRp1], is installed
+
+**Remark:** Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
+
+**Remark:** Similarly, "PDF::Extract" requires additional, non-Raku installation, and it targets only macOS (currently.)
+That is why it is not included in the dependencies of "Data::Importers".
 
 ----
 
@@ -49,10 +56,10 @@ slurp($*CWD ~ '/resources/simple.json', format => 'json')
 # {name => ingrid, value => 1}
 ```
 
-Instead of `slurp` the function `import` can be used (no need to use "format"):
+Instead of `slurp` the function `data-import` can be used (no need to use "format"):
 
 ```perl6
-import($*CWD ~ '/resources/simple.json')
+data-import($*CWD ~ '/resources/simple.json')
 ```
 ```
 # {name => ingrid, value => 1}
@@ -78,7 +85,7 @@ Import a JSON file:
 ```perl6
 my $url = 'https://raw.githubusercontent.com/antononcube/Raku-LLM-Prompts/main/resources/prompt-stencil.json';
 
-my $res = import($url, format => Whatever);
+my $res = data-import($url, format => Whatever);
 
 $res.WHAT;
 ```
@@ -97,7 +104,7 @@ deduce-type($res);
 # Struct([Arity, Categories, ContributedBy, Description, Keywords, Name, NamedArguments, PositionalArguments, PromptText, Topics, URL], [Int, Hash, Str, Str, Array, Str, Array, Hash, Str, Hash, Str])
 ```
 
-Using `slurp` instead of `import`:
+Using `slurp` instead of `data-import`:
 
 ```perl6
 slurp($url)
@@ -113,7 +120,7 @@ Import an [image](https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/
 ```perl6
 my $imgURL = 'https://raw.githubusercontent.com/antononcube/Raku-WWW-OpenAI/main/resources/ThreeHunters.jpg';
 
-import($imgURL, format => 'md-image').substr(^100)
+data-import($imgURL, format => 'md-image').substr(^100)
 ```
 ```
 # ![](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFBEVF
@@ -135,7 +142,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>NaturalGas</td><td>Natural Gas Data</td><td>138</td><td>10</td></tr><tr><td>Ecdat</td><td>Mpyr</td><td>Money, National Product and Interest Rate</td><td>90</td><td>4</td></tr><tr><td>Ecdat</td><td>SP500</td><td>Returns on Standard &amp; Poor&#39;s 500 Index</td><td>2783</td><td>1</td></tr><tr><td>Ecdat</td><td>Star</td><td>Effects on Learning of Small Class Sizes</td><td>5748</td><td>8</td></tr><tr><td>Stat2Data</td><td>OilDeapsorbtion</td><td>Effect of Ultrasound on Oil Deapsorbtion</td><td>40</td><td>4</td></tr><tr><td>datasets</td><td>stackloss</td><td>Brownlee&#39;s Stack Loss Plant Data</td><td>21</td><td>4</td></tr><tr><td>fpp2</td><td>maxtemp</td><td>Maximum annual temperatures at Moorabbin Airport, Melbourne</td><td>46</td><td>2</td></tr><tr><td>gap</td><td>cf</td><td>Internal functions for gap</td><td>186</td><td>24</td></tr><tr><td>robustbase</td><td>epilepsy</td><td>Epilepsy Attacks Data Set</td><td>59</td><td>11</td></tr><tr><td>texmex</td><td>winter</td><td>Air pollution data, separately for summer and winter months</td><td>532</td><td>5</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>DAAG</td><td>cerealsugar</td><td>Percentage of Sugar in Breakfast Cereal</td><td>100</td><td>1</td></tr><tr><td>DAAG</td><td>softbacks</td><td>Measurements on a Selection of Paperback Books</td><td>8</td><td>2</td></tr><tr><td>MASS</td><td>Sitka</td><td>Growth Curves for Sitka Spruce Trees in 1988</td><td>395</td><td>4</td></tr><tr><td>Stat2Data</td><td>SugarEthanol</td><td>Effects of Oxygen on Sugar Metabolism</td><td>16</td><td>3</td></tr><tr><td>Stat2Data</td><td>TextPrices</td><td>Textbook Prices</td><td>30</td><td>2</td></tr><tr><td>datasets</td><td>anscombe</td><td>Anscombe&#39;s Quartet of &#39;Identical&#39; Simple Linear Regressions</td><td>11</td><td>8</td></tr><tr><td>fpp2</td><td>maxtemp</td><td>Maximum annual temperatures at Moorabbin Airport, Melbourne</td><td>46</td><td>2</td></tr><tr><td>geepack</td><td>respiratory</td><td>Data from a clinical trial comparing two treatments for a respiratory illness</td><td>444</td><td>8</td></tr><tr><td>openintro</td><td>penny_ages</td><td>Penny Ages</td><td>648</td><td>2</td></tr><tr><td>validate</td><td>samplonomy</td><td>Economic data on Samplonia</td><td>1199</td><td>5</td></tr></tbody></table>
 
 
 ### PDF URL
@@ -151,7 +158,9 @@ say text-stats($txt);
 # (chars => 2851 words => 416 lines => 38)
 ```
 
-Here is a smple of the imported text:
+**Remark:** The function `text-stats` is provided by this package, "Data::Importers". 
+
+Here is a sample of the imported text:
 
 ```perl6
 $txt.lines[^6].join("\n")
@@ -164,6 +173,7 @@ $txt.lines[^6].join("\n")
 # pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit.
 # Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus.
 ```
+
 
 -----
 
@@ -189,4 +199,9 @@ $txt.lines[^6].join("\n")
 [HMBp1] H. Merijn Brand,
 [Text::CSV Raku package](https://github.com/Tux/CSV),
 (2015-2023),
-[GitHub/Tux](https://github.com/Tux).   
+[GitHub/Tux](https://github.com/Tux).
+
+[SRp1] Steve Roe,
+[PDF::Extract Raku package](https://github.com/librasteve/raku-PDF-Extract),
+(2023),
+[GitHub/librasteve](https://github.com/librasteve).   

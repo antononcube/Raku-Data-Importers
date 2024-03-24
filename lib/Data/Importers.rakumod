@@ -230,17 +230,17 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
 #| The format argument can be both named and positional.
 #| <$source> -- file or URL.
 #| <:$format> -- format of the data; if Whatever the extension is used to determine the format.
-proto sub import($source, |) is export {*}
+proto sub data-import($source, |) is export {*}
 
-multi sub import($source, $format, *%args) {
-    return import($source, :$format, |%args);
+multi sub data-import($source, $format, *%args) {
+    return data-import($source, :$format, |%args);
 }
 
-multi sub import($source where $source.IO.e, :$format = Whatever, *%args) {
+multi sub data-import($source where $source.IO.e, :$format = Whatever, *%args) {
     return import-file($source, :$format, |%args);
 }
 
-multi sub import($source where $source.&is-url, :$format = Whatever, *%args) {
+multi sub data-import($source where $source.&is-url, :$format = Whatever, *%args) {
     return import-url($source, :$format, |%args);
 }
 

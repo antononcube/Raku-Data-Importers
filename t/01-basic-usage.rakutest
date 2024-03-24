@@ -9,19 +9,19 @@ plan *;
 
 ## 1
 my $file1 = $*CWD ~ '/resources/short.txt';
-ok import($file1);
+ok data-import($file1);
 
 ## 2
 my $file2 = $*CWD ~ '/resources/simple.json';
-ok import($file2);
+ok data-import($file2);
 
 ## 3
 my $file3 = $*CWD ~ '/resources/simple.csv';
-ok import($file3);
+ok data-import($file3);
 
 ## 4
 my $file4 = $*CWD ~ '/resources/simple.pdf';
-ok import($file4, format => 'txt');
+ok data-import($file4, format => 'txt');
 
 
 ## 5
