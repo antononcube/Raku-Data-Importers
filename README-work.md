@@ -28,7 +28,7 @@ zef install Data::Importers
 From GitHub:
 
 ```
-zef install https://github.com/antononcube/Raku-Data-Slurps.git
+zef install https://github.com/antononcube/Raku-Data-Importers.git
 ```
 
 -----

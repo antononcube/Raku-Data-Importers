@@ -28,7 +28,7 @@ zef install Data::Importers
 From GitHub:
 
 ```
-zef install https://github.com/antononcube/Raku-Data-Slurps.git
+zef install https://github.com/antononcube/Raku-Data-Importers.git
 ```
 
 -----
@@ -135,7 +135,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>ArgentinaCPI</td><td>Consumer Price Index in Argentina</td><td>80</td><td>2</td></tr><tr><td>Ecdat</td><td>ModeChoice</td><td>Data to Study Travel Mode Choice</td><td>840</td><td>7</td></tr><tr><td>KMsurv</td><td>kidtran</td><td>data from Section 1.7</td><td>863</td><td>6</td></tr><tr><td>MASS</td><td>Aids2</td><td>Australian AIDS Survival Data</td><td>2843</td><td>7</td></tr><tr><td>Stat2Data</td><td>SuicideChina</td><td>Suicide Attempts in Shandong, China</td><td>2571</td><td>11</td></tr><tr><td>boot</td><td>beaver</td><td>Beaver Body Temperature Data</td><td>100</td><td>4</td></tr><tr><td>boot</td><td>motor</td><td>Data from a Simulated Motorcycle Accident</td><td>94</td><td>4</td></tr><tr><td>openintro</td><td>gifted</td><td>Analytical skills of young gifted children</td><td>36</td><td>8</td></tr><tr><td>openintro</td><td>mlb</td><td>Salary data for Major League Baseball (2010)</td><td>828</td><td>4</td></tr><tr><td>robustbase</td><td>hbk</td><td>Hawkins, Bradu, Kass&#39;s Artificial Data</td><td>75</td><td>4</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>DAAG</td><td>ant111b</td><td>Averages by block of corn yields, for treatment 111 only</td><td>32</td><td>9</td></tr><tr><td>HSAUR</td><td>Lanza</td><td>Prevention of Gastointestinal Damages</td><td>198</td><td>3</td></tr><tr><td>Stat2Data</td><td>Olives</td><td>Fenthion in Olive Oil</td><td>18</td><td>7</td></tr><tr><td>Stat2Data</td><td>Retirement</td><td>Yearly Contributions to a Supplemental Retirement Account</td><td>16</td><td>2</td></tr><tr><td>asaur</td><td>hepatoCellular</td><td>hepatoCellular</td><td>227</td><td>48</td></tr><tr><td>openintro</td><td>nba_heights</td><td>NBA Player heights from 2008-9</td><td>435</td><td>4</td></tr><tr><td>robustbase</td><td>NOxEmissions</td><td>NOx Air Pollution Data</td><td>8088</td><td>4</td></tr><tr><td>stevedata</td><td>mm_mlda</td><td>Minimum Legal Drinking Age Fatalities Data</td><td>50</td><td>19</td></tr><tr><td>stevedata</td><td>usa_tradegdp</td><td>U.S. Trade and GDP, 1790-2018</td><td>229</td><td>5</td></tr><tr><td>survival</td><td>diabetic</td><td>Ddiabetic retinopathy</td><td>394</td><td>8</td></tr></tbody></table>
 
 
 ----- 
