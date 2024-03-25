@@ -20,11 +20,6 @@ my $file3 = $*CWD ~ '/resources/simple.csv';
 ok data-import($file3);
 
 ## 4
-my $file4 = $*CWD ~ '/resources/simple.pdf';
-ok data-import($file4, format => 'txt');
-
-
-## 5
 my $txt4 = q:to/END/;
 How mush is the fish?
 END

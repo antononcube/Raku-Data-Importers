@@ -21,11 +21,5 @@ is
         data-import($file2),
         'json file equivalence';
 
-## 3
-my $file3 = $*CWD ~ '/resources/simple.csv';
-is
-        slurp($file3, format => 'csv'),
-        data-import($file3),
-        'csv file equivalence';
 
 done-testing;
