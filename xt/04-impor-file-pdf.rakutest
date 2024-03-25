@@ -1,0 +1,14 @@
+use v6.d;
+
+use lib <. lib>;
+
+use Data::Importers;
+use Test;
+
+plan *;
+
+## 1
+my $file4 = $*CWD ~ '/resources/simple.pdf';
+ok data-import($file4, format => 'txt');
+
+done-testing;

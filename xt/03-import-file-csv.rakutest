@@ -1,0 +1,22 @@
+
+use v6.d;
+
+use lib <. lib>;
+
+use Data::Importers;
+use Test;
+
+plan *;
+
+## 1
+my $file1 = $*CWD ~ '/resources/simple.csv';
+ok data-import($file1), 'CSV file import';
+
+## 2
+my $file3 = $*CWD ~ '/resources/simple.csv';
+is
+        slurp($file3, format => 'csv'),
+        data-import($file3),
+        'csv file equivalence';
+
+done-testing;
