@@ -191,7 +191,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             try {
                 use PDF::Extract;
 
-                my $extract = Extract.new(file => $file.subst(/(\s)/, { '\\' ~ $0.Str }):g);
+                my $extract = Extract.new(:$file);
 
                 when $_ ∈ <plaintext text txt> {
                     return $extract.text;
