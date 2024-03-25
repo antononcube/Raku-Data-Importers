@@ -6,6 +6,47 @@ use JSON::Fast;
 use URI;
 
 #============================================================
+# Check utilities
+#============================================================
+# These are taken for "App::Rak" by lizmat.
+
+my $TextCSV;
+my $PDFExtract;
+
+# Sane way of quitting
+my sub meh($message) is hidden-from-backtrace {
+    die $message.ends-with('.' | '?')
+            ?? $message
+            !! "$message.";
+}
+
+# Quit if module not installed
+my sub meh-not-installed($module, $feature) is hidden-from-backtrace {
+    meh qq:to/MEH/.chomp;
+Must have the $module module installed to do $feature.
+You can do this by running 'zef install $module'.
+MEH
+}
+
+# check Text::CSV availability
+my sub check-TextCSV(str $name) {
+    unless $TextCSV {
+        CATCH { meh-not-installed 'Text::CSV', "$name" }
+        require Text::CSV;
+        $TextCSV := Text::CSV;
+    }
+}
+
+# check PDF::Extract availability
+my sub check-PDFExtract(str $name) {
+    unless $PDFExtract {
+        CATCH { meh-not-installed 'PDF::Extract', "$name" }
+        require PDF::Extract;
+        $PDFExtract := PDF::Extract;
+    }
+}
+
+#============================================================
 # Text utilities
 #============================================================
 
@@ -178,34 +219,28 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             return from-json(slurp($file));
         }
         when 'csv' {
-            try {
-                use Text::CSV;
-                return csv(in => $file, |%args);
-            }
-            if $! {
-                note $!.^name;
-                die 'Cannot import CSV file. Is "Text::CSV" installed?';
-            }
+            check-TextCSV('CSV file importing');
+            my $csv     := $TextCSV.new();
+            return $csv.csv(:$file, |%args);
         }
         when $ext.lc eq 'pdf' && $_ ∈ <plaintext text txt html xml> {
-            try {
-                use PDF::Extract;
 
-                my $extract = Extract.new(:$file);
+            check-PDFExtract('PDF file importing');
+            my $extract = $PDFExtract.new(:$file);
 
-                when $_ ∈ <plaintext text txt> {
-                    return $extract.text;
-                }
-                when $_ ∈ <html> {
-                    return $extract.html;
-                }
-                when $_ ∈ <xml> {
-                    return $extract.xml;
-                }
-                default {
-                    die "Do not know what to do with the specified format for the a file with extension <pdf>.";
-                }
+            when $_ ∈ <plaintext text txt> {
+                return $extract.text;
             }
+            when $_ ∈ <html> {
+                return $extract.html;
+            }
+            when $_ ∈ <xml> {
+                return $extract.xml;
+            }
+            default {
+                die "Do not know what to do with the specified format for the a file with extension <pdf>.";
+            }
+
             if $! {
                 note $!.^name;
                 die 'Cannot import PDF file. Is "PDF::Extract" installed?';
