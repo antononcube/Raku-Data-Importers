@@ -41,8 +41,9 @@ my sub check-TextCSV(str $name) {
 my sub check-PDFExtract(str $name) {
     unless $PDFExtract {
         CATCH { meh-not-installed 'PDF::Extract', "$name" }
-        require PDF::Extract;
-        $PDFExtract := PDF::Extract;
+        #require PDF::Extract;
+        require PDF::Extract <Extract>;
+        $PDFExtract := Extract;
     }
 }
 
@@ -224,10 +225,8 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             return $csv.csv(:$file, |%args);
         }
         when $ext.lc eq 'pdf' && $_ ∈ <plaintext text txt html xml> {
-
             check-PDFExtract('PDF file importing');
             my $extract = $PDFExtract.new(:$file);
-
             when $_ ∈ <plaintext text txt> {
                 return $extract.text;
             }
