@@ -122,7 +122,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <csv html image json md-image plaintext text xml>;
+    my @expectedFormats = <asis csv html image json md-image plaintext text xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -206,7 +206,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <csv html image json md-image plaintext text xml>;
+    my @expectedFormats = <asis csv html image json md-image plaintext text xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
