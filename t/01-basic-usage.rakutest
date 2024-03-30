@@ -26,4 +26,7 @@ END
 is text-stats($txt4).all ~~ Pair:D, True, 'text-stats gives a list of pairs';
 
 
+## 5
+ok data-import($file1, format => 'asis');
+
 done-testing;
