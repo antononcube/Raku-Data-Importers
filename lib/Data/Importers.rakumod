@@ -76,7 +76,7 @@ sub is-url(Str $url -->Bool) {
 }
 
 #-----------------------------------------------------------
-sub strip-html(Str $html --> Str) {
+sub strip-html(Str $html --> Str) is export {
 
     my $res = $html
             .subst(/'<style'.*?'</style>'/, :g)
@@ -84,7 +84,8 @@ sub strip-html(Str $html --> Str) {
             .subst(/'<'.*?'>'/, :g)
             .subst(/'&lt;'.*?'&gt;'/, :g)
             .subst(/'&nbsp;'/, ' ', :g)
-            .subst(/[\v\s*] ** 2..*/, "\n\n", :g);
+            .subst(/[\v\s*] ** 2..*/, "\n\n", :g)
+            .subst(/'JSON.parse("' .*? <!after \\> '")'/, :g);
 
     return $res;
 }
