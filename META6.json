@@ -22,7 +22,8 @@
     "simple.csv",
     "simple.json",
     "short.txt",
-    "simple.pdf"
+    "simple.pdf",
+    "simple.tsv"
   ],
   "license": "Artistic-2.0",
   "tags": [
