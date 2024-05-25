@@ -1,4 +1,3 @@
-
 use v6.d;
 
 use lib <. lib>;
@@ -13,10 +12,28 @@ my $file1 = $*CWD ~ '/resources/simple.csv';
 ok data-import($file1), 'CSV file import';
 
 ## 2
-my $file3 = $*CWD ~ '/resources/simple.csv';
 is
-        slurp($file3, format => 'csv'),
-        data-import($file3),
+        slurp($file1, format => 'csv'),
+        data-import($file1),
         'csv file equivalence';
+
+
+## 3
+my $file2 = $*CWD ~ '/resources/simple.tsv';
+ok data-import($file2), 'TSV file import';
+
+## 4
+is
+        slurp($file2, format => 'tsv'),
+        data-import($file2),
+        'tsv file equivalence';
+
+## 5
+#note note data-import($file2, headers => 'auto').raku;
+my @res5 = [{ :X1("1"), :X2("A"), :X3("Cold") }, { :X1("2"), :X2("B"), :X3("Warm") }, { :X1("3"), :X2("C"), :X3("Hot") }];
+is-deeply
+        data-import($file2, headers => 'auto'),
+        @res5,
+        'expected TSV import structure';
 
 done-testing;

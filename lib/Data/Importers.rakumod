@@ -105,6 +105,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
     if $format.isa(Whatever) {
         $format = do given $url {
             when $_ ~~ /:i '.csv' $ / { 'csv' }
+            when $_ ~~ /:i '.tsv' $ / { 'tsv' }
             when $_ ~~ /:i '.json' $ / { 'json' }
             when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
             when $_ ~~ /:i '.pdf' $ / { 'text' }
@@ -123,7 +124,7 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <asis csv html image json md-image plaintext text xml>;
+    my @expectedFormats = <asis csv html image json md-image plaintext text tsv xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -149,10 +150,10 @@ multi sub import-url(Str $url, :$format is copy = Whatever, *%args) {
 
     # Process
     return do given $format {
-        when 'csv' {
-            my $csv-file = $*TMPDIR.child("temp-{ (^10).pick(12).join }.csv");
+        when $_ ∈ <csv tsv> {
+            my $csv-file = $*TMPDIR.child("temp-{ (^10).pick(12).join }.$format");
             $csv-file.spurt($content);
-            return import-file($csv-file, format => 'csv', |%args);
+            return import-file($csv-file, :$format, |%args);
         }
         when $_ eq 'plaintext' {
             $content .= subst(/ \v+ /, "\n", :g);
@@ -193,6 +194,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             when $_ ~~ /:i '.html' $ / { 'plaintext' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
             when $_ ~~ /:i '.csv' $ / { 'csv' }
+            when $_ ~~ /:i '.tsv' $ / { 'tsv' }
             when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
             default { 'asis' }
         }
@@ -207,7 +209,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <asis csv html image json md-image plaintext text xml>;
+    my @expectedFormats = <asis csv html image json md-image plaintext text tsv xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -224,6 +226,12 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             check-TextCSV('CSV file importing');
             my $csv     := $TextCSV.new();
             return $csv.csv(:$file, |%args);
+        }
+        when 'tsv' {
+            check-TextCSV('TSV file importing');
+            my $csv     := $TextCSV.new();
+            my %args2 = %( sep => "\t") , %args;
+            return $csv.csv(:$file, |%args2);
         }
         when $ext.lc eq 'pdf' && $_ ∈ <plaintext text txt html xml> {
             check-PDFExtract('PDF file importing');
