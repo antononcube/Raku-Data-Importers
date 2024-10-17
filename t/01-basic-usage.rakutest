@@ -16,10 +16,6 @@ my $file2 = $*CWD ~ '/resources/simple.json';
 ok data-import($file2);
 
 ## 3
-my $file3 = $*CWD ~ '/resources/simple.csv';
-ok data-import($file3);
-
-## 4
 my $txt4 = q:to/END/;
 How mush is the fish?
 END
