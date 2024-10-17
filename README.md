@@ -1,5 +1,11 @@
 # Data::Importers
 
+[![Actions Status](https://github.com/antononcube/Raku-Data-Importers/actions/workflows/linux.yml/badge.svg)](https://github.com/antononcube/Raku-Data-Importers/actions)
+[![Actions Status](https://github.com/antononcube/Raku-Data-Importers/actions/workflows/macos.yml/badge.svg)](https://github.com/antononcube/Raku-Data-Importers/actions)
+
+[![](https://raku.land/zef:antononcube/Data::Importers/badges/version)](https://raku.land/zef:antononcube/Data::Importers)
+[![License: Artistic-2.0](https://img.shields.io/badge/License-Artistic%202.0-0298c3.svg)](https://opensource.org/licenses/Artistic-2.0)
+
 ## In brief
 
 This repository is for a Raku package for the ingestion of different types of data
@@ -144,7 +150,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>Ecdat</td><td>Diamond</td><td>Pricing the C&#39;s of Diamond Stones</td><td>308</td><td>5</td></tr><tr><td>MASS</td><td>GAGurine</td><td>Level of GAG in Urine of Children</td><td>314</td><td>2</td></tr><tr><td>Stat2Data</td><td>Caterpillars</td><td>Measurements of Manduca Sexta Caterpillars</td><td>267</td><td>18</td></tr><tr><td>Stat2Data</td><td>FaithfulFaces</td><td>Faithfulness from a Photo?</td><td>170</td><td>7</td></tr><tr><td>nycflights13</td><td>flights</td><td>Flights data</td><td>336776</td><td>19</td></tr><tr><td>openintro</td><td>coast_starlight</td><td>Coast Starlight Amtrak train</td><td>16</td><td>3</td></tr><tr><td>openintro</td><td>hsb2</td><td>High School and Beyond survey</td><td>200</td><td>11</td></tr><tr><td>robustbase</td><td>wood</td><td>Modified Data on Wood Specific Gravity</td><td>20</td><td>6</td></tr><tr><td>stevedata</td><td>anes_partytherms</td><td>Major Party (Democrat, Republican) Thermometer Index Data (1978-2012)</td><td>33830</td><td>19</td></tr><tr><td>stevedata</td><td>usa_computers</td><td>Percentage of U.S. Households with Computer Access, by Year</td><td>19</td><td>2</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>USGasB</td><td>US Gasoline Market Data (1950-1987, Baltagi)</td><td>38</td><td>6</td></tr><tr><td>DAAG</td><td>fossum</td><td>Female Possum Measurements</td><td>43</td><td>14</td></tr><tr><td>Ecdat</td><td>OCC1950</td><td>Evolution of occupational distribution in the US</td><td>281</td><td>31</td></tr><tr><td>datasets</td><td>rivers</td><td>Lengths of Major North American Rivers</td><td>141</td><td>1</td></tr><tr><td>drc</td><td>daphnids</td><td>Daphnia test</td><td>16</td><td>4</td></tr><tr><td>drc</td><td>earthworms</td><td>Earthworm toxicity test</td><td>35</td><td>3</td></tr><tr><td>openintro</td><td>sp500_1950_2018</td><td>Daily observations for the S&amp;P 500</td><td>17346</td><td>7</td></tr><tr><td>openintro</td><td>unemploy_pres</td><td>President&#39;s party performance and unemployment rate</td><td>29</td><td>5</td></tr><tr><td>rpart</td><td>kyphosis</td><td>Data on Children who have had Corrective Spinal Surgery</td><td>81</td><td>4</td></tr><tr><td>stevedata</td><td>steves_clothes</td><td>Steve&#39;s (Professional) Clothes, as of March 3, 2019</td><td>79</td><td>4</td></tr></tbody></table>
 
 
 ### PDF URL
@@ -157,7 +163,9 @@ my $txt = slurp('https://pdfobject.com/pdf/sample.pdf', format=>'text');
 say text-stats($txt);
 ```
 ```
-# (chars => 2851 words => 416 lines => 38)
+#ERROR: Must have the PDF::Extract module installed to do PDF file importing.
+#ERROR: You can do this by running 'zef install PDF::Extract'.
+# Nil
 ```
 
 **Remark:** The function `text-stats` is provided by this package, "Data::Importers". 
@@ -168,12 +176,8 @@ Here is a sample of the imported text:
 $txt.lines[^6].join("\n")
 ```
 ```
-# Sample PDF
-# This is a simple PDF file. Fun fun fun.
-# Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus facilisis odio sed mi.
-# Curabitur suscipit. Nullam vel nisi. Etiam semper ipsum ut lectus. Proin aliquam, erat eget
-# pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit.
-# Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus.
+#ERROR: No such method 'lines' for invocant of type 'Any'
+# Nil
 ```
 
 

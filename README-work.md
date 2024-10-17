@@ -1,5 +1,11 @@
 # Data::Importers
 
+[![Actions Status](https://github.com/antononcube/Raku-Data-Importers/actions/workflows/linux.yml/badge.svg)](https://github.com/antononcube/Raku-Data-Importers/actions)
+[![Actions Status](https://github.com/antononcube/Raku-Data-Importers/actions/workflows/macos.yml/badge.svg)](https://github.com/antononcube/Raku-Data-Importers/actions)
+
+[![](https://raku.land/zef:antononcube/Data::Importers/badges/version)](https://raku.land/zef:antononcube/Data::Importers)
+[![License: Artistic-2.0](https://img.shields.io/badge/License-Artistic%202.0-0298c3.svg)](https://opensource.org/licenses/Artistic-2.0)
+
 ## In brief
 
 This repository is for a Raku package for the ingestion of different types of data
