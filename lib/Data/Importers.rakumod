@@ -3,6 +3,7 @@ unit module Data::Importers;
 use HTTP::Tiny;
 use Image::Markup::Utilities;
 use JSON::Fast;
+use Data::TypeSystem;
 use URI;
 
 #============================================================
@@ -188,8 +189,8 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
     # Process format
     if $format.isa(Whatever) {
         $format = do given $file {
-            when $_ ~~ /:i '.json' $ / { 'json' }
-            when $_ ~~ /:i '.txt' | '.text' $ / { 'text' }
+            when $_ ~~ /:i ['.json' | '.ipynb' | '.vsnb'] $ / { 'json' }
+            when $_ ~~ /:i ['.txt' | '.text' | '.org' | '.md' | '.Rmd'] $ / { 'text' }
             when $_ ~~ /:i '.pdf' $ / { 'text' }
             when $_ ~~ /:i '.html' $ / { 'plaintext' }
             when $_ ~~ /:i '.xml' $ / { 'xml' }
@@ -209,7 +210,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <asis csv html image json md-image plaintext text tsv xml>;
+    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -265,12 +266,12 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
 
 
 #============================================================
-# import
+# Data import
 #============================================================
 
 #| Imports URLs and files.
 #| Automatically deduces the data type from extensions.
-#| The recognized format types are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
+#| The recognized format types are: CSV, HTML, JSON, Image (png, jpeg, jpg), Markdown, PDF, Org, Plaintext, Rmd, Text, TSV, XML.
 #| The format argument can be both named and positional.
 #| <$source> -- file or URL.
 #| <:$format> -- format of the data; if Whatever the extension is used to determine the format.
@@ -298,4 +299,107 @@ multi sub slurp($source where $source.IO.e, :$format!, *%args) is export {
 
 multi sub slurp($source where $source.&is-url, :$format = Whatever, *%args) is export {
     return import-url($source, :$format, |%args);
+}
+
+
+#============================================================
+# File export
+#============================================================
+proto sub export-file($file, $obj, :$format = Whatever, *%args) {*}
+
+multi sub export-file(Str $file, $obj, :$format is copy = Whatever, *%args) {
+    return export-file($file.IO, $obj, :$format, |%args);
+}
+
+multi sub export-file(IO::Path $file, $obj, :$format is copy = Whatever, *%args) {
+    # Extension
+    my $ext = do with $file.match(/ '.' (\w+) $/) { $0.Str.lc };
+
+    # Process format
+    if $format.isa(Whatever) {
+        $format = do given $file {
+            when $_ ~~ /:i ['.json' | '.ipynb' | '.vsnb'] $ / { 'json' }
+            when $_ ~~ /:i ['.txt' | '.text' | '.org' | '.md' | '.Rmd'] $ / { 'text' }
+            when $_ ~~ /:i '.pdf' $ / { 'text' }
+            when $_ ~~ /:i '.html' $ / { 'text' }
+            when $_ ~~ /:i '.xml' $ / { 'text' }
+            when $_ ~~ /:i '.csv' $ / { 'csv' }
+            when $_ ~~ /:i '.tsv' $ / { 'tsv' }
+            when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
+            default { 'asis' }
+        }
+    }
+
+    if $format ~~ Str:D {
+        $format = do given $format {
+            when $_ ∈ <txt text md markdown> { 'plaintext' }
+            when $_ ∈ <img image png jpg jpeg> {
+                # 'image'
+                die 'Image exporting is not supported.';
+            }
+            when $_ ∈ <markdown-image md-image> {
+                # 'md-image'
+                die 'Image exporting is not supported.';
+            }
+            default { $format }
+        }
+    }
+
+    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml>;
+    die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
+    unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
+    $format = $format.lc;
+
+    # Ingest
+    return do given $format {
+        when 'json' {
+            return spurt($file, to-json($obj));
+        }
+        when 'csv' {
+            check-TextCSV('CSV file exporting');
+            my $csv     := $TextCSV.new();
+            return $csv.csv(:$file, in => $obj, |%args);
+        }
+        when 'tsv' {
+            check-TextCSV('TSV file exporting');
+            my $csv     := $TextCSV.new();
+            my %args2 = %( sep => "\t") , %args;
+            return $csv.csv(:$file, in => $obj |%args2);
+        }
+        when $_ ∈ <plaintext text txt asis> {
+            return spurt($file, $obj);
+        }
+        default {
+            die "Do not know what to do with the specified format.";
+        }
+    }
+}
+
+#============================================================
+# Data export
+#============================================================
+
+#| Exports objects to files.
+#| Automatically deduces the data type from extensions.
+#| The recognized format types are: CSV, HTML, JSON, Markdown, Org, Plaintext, Rmd, Text, TSV, XML.
+#| The format argument can be both named and positional.
+#| <$target> -- File to export to.
+#| <$obj> -- object to export.
+#| <:$format> -- format of the data; if Whatever the extension is used to determine the format.
+proto sub data-export($target, $obj, |) is export {*}
+
+multi sub data-export($target, $obj, $format, *%args) {
+    return data-export($target, $obj, :$format, |%args);
+}
+
+multi sub data-export($target where ($target.IO.e && $target.IO.f || $target.IO), $obj, :$format = Whatever, *%args) {
+    return export-file($target, $obj, :$format, |%args);
+}
+
+#============================================================
+# spurt
+#============================================================
+
+multi sub spurt($target where $target.IO.e, $obj, :$format!, *%args) is export {
+    return export-file($target, $obj, :$format, |%args);
 }
