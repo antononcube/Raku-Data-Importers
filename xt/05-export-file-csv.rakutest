@@ -1,0 +1,37 @@
+use v6.d;
+
+# use lib <. lib>;
+
+use Data::Importers;
+use Test;
+
+plan *;
+
+subtest {
+        ## Temp file to write into
+        my $file1 = $*CWD ~ '/resources/short.txt';
+        my $file1exp = $*TMPDIR ~ '/raku-data-importers-' ~ $file1.IO.basename;
+
+        ## 1 Ok to call
+        is data-export($file1exp, data-import($file1, format => 'asis')), True, 'ok to data export';
+
+        ## 2 Same content
+        is slurp($file1exp), slurp($file1), 'same content';
+
+        ## Temp file to write into
+        my $file2 = $*CWD ~ '/resources/simple.csv';
+        my $file2exp = $*TMPDIR ~ '/raku-data-importers~' ~ $file2.IO.basename;
+
+        ## 3 Ok to call
+        is data-export($file2exp, data-import($file2)), True, 'ok to data export';
+
+        ## 4 Same content
+        is-deeply
+                data-import($file2exp, format => 'csv'),
+                data-import($file2, format => 'csv'),
+                'same data from CSV';
+
+}, 'Text and CSV export check';
+
+
+done-testing;

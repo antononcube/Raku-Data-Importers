@@ -38,7 +38,7 @@ subtest {
     is slurp($file1exp), slurp($file1), 'same content';
 
     ## Temp file to write into
-    my $file2 = $*CWD ~ '/resources/simple.csv';
+    my $file2 = $*CWD ~ '/resources/simple.json';
     my $file2exp = $*TMPDIR ~ '/raku-data-importers~' ~ $file2.IO.basename;
 
     ## 3 Ok to call
@@ -46,10 +46,10 @@ subtest {
 
     ## 4 Same content
     is-deeply
-            data-import($file2exp, format => 'csv'),
-            data-import($file2, format => 'csv'),
-            'same data from CSV';
+            data-import($file2exp, format => 'json'),
+            data-import($file2, format => 'json'),
+            'same data from JSON';
 
-}, 'Text and CSV export check';
+}, 'Text and JSON export check';
 
 done-testing;
