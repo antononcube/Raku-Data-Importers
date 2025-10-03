@@ -1,0 +1,8 @@
+Revision history for "Data::Importers"
+
+0.1.7 2025-10-03
+    - Added the export function &data-export.
+        - Also, overloaded &spurt.
+        - This some contradictory since the package name is "Data::Importers".
+            - But I did not want to make another package ("Data::Exporters").
+            - Also, "Data::Exporters" will duplicated some of the code of "Data::Importers".
