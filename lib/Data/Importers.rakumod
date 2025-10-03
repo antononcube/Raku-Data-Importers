@@ -4,6 +4,7 @@ use HTTP::Tiny;
 use Image::Markup::Utilities;
 use JSON::Fast;
 use Data::TypeSystem;
+use Data::TypeSystem::Predicates;
 use URI;
 
 #============================================================
@@ -307,11 +308,11 @@ multi sub slurp($source where $source.&is-url, :$format = Whatever, *%args) is e
 #============================================================
 proto sub export-file($file, $obj, :$format = Whatever, *%args) {*}
 
-multi sub export-file(Str $file, $obj, :$format is copy = Whatever, *%args) {
+multi sub export-file(Str:D $file, $obj, :$format is copy = Whatever, *%args) {
     return export-file($file.IO, $obj, :$format, |%args);
 }
 
-multi sub export-file(IO::Path $file, $obj, :$format is copy = Whatever, *%args) {
+multi sub export-file(IO::Path:D $file, $obj, :$format is copy = Whatever, *%args) {
     # Extension
     my $ext = do with $file.match(/ '.' (\w+) $/) { $0.Str.lc };
 
@@ -350,7 +351,7 @@ multi sub export-file(IO::Path $file, $obj, :$format is copy = Whatever, *%args)
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
 
-    # Ingest
+    # Dump
     return do given $format {
         when 'json' {
             return spurt($file, to-json($obj));
@@ -358,13 +359,23 @@ multi sub export-file(IO::Path $file, $obj, :$format is copy = Whatever, *%args)
         when 'csv' {
             check-TextCSV('CSV file exporting');
             my $csv     := $TextCSV.new();
-            return $csv.csv(:$file, in => $obj, |%args);
+            if is-array-of-arrays($obj) || $obj ~~ (Array:D | List:D | Seq:D) {
+                my @obj = |$obj;
+                return $csv.csv(out => $file.Str, in => @obj, |%args);
+            } else {
+                die 'Cannot export the given object as a CSV file.'
+            }
         }
         when 'tsv' {
             check-TextCSV('TSV file exporting');
             my $csv     := $TextCSV.new();
             my %args2 = %( sep => "\t") , %args;
-            return $csv.csv(:$file, in => $obj |%args2);
+            if is-array-of-arrays($obj) || $obj ~~ (Array:D | List:D | Seq:D) {
+                my @obj = |$obj;
+                return $csv.csv(out => $file.Str, in => @obj, |%args2);
+            } else {
+                die 'Cannot export the given object as a TSV file.'
+            }
         }
         when $_ ∈ <plaintext text txt asis> {
             return spurt($file, $obj);
