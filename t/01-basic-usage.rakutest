@@ -1,28 +1,55 @@
 use v6.d;
 
-use lib <. lib>;
+# use lib <. lib>;
 
 use Data::Importers;
 use Test;
 
 plan *;
 
-## 1
-my $file1 = $*CWD ~ '/resources/short.txt';
-ok data-import($file1);
+subtest {
+    ## 1
+    my $file1 = $*CWD ~ '/resources/short.txt';
+    ok data-import($file1);
 
-## 2
-my $file2 = $*CWD ~ '/resources/simple.json';
-ok data-import($file2);
+    ## 2
+    my $file2 = $*CWD ~ '/resources/simple.json';
+    ok data-import($file2);
 
-## 3
-my $txt4 = q:to/END/;
-How mush is the fish?
-END
-is text-stats($txt4).all ~~ Pair:D, True, 'text-stats gives a list of pairs';
+    ## 3
+    my $txt4 = q:to/END/;
+    How mush is the fish?
+    END
+    is text-stats($txt4).all ~~ Pair:D, True, 'text-stats gives a list of pairs';
 
+    ## 4
+    ok data-import($file1, format => 'asis');
+}, 'Text and JSON import';
 
-## 5
-ok data-import($file1, format => 'asis');
+subtest {
+    ## Temp file to write into
+    my $file1 = $*CWD ~ '/resources/short.txt';
+    my $file1exp = $*TMPDIR ~ '/raku-data-importers-' ~ $file1.IO.basename;
+
+    ## 1 Ok to call
+    is data-export($file1exp, data-import($file1, format => 'asis')), True, 'ok to data export';
+
+    ## 2 Same content
+    is slurp($file1exp), slurp($file1), 'same content';
+
+    ## Temp file to write into
+    my $file2 = $*CWD ~ '/resources/simple.csv';
+    my $file2exp = $*TMPDIR ~ '/raku-data-importers~' ~ $file2.IO.basename;
+
+    ## 3 Ok to call
+    is data-export($file2exp, data-import($file2)), True, 'ok to data export';
+
+    ## 4 Same content
+    is-deeply
+            data-import($file2exp, format => 'csv'),
+            data-import($file2, format => 'csv'),
+            'same data from CSV';
+
+}, 'Text and CSV export check';
 
 done-testing;
