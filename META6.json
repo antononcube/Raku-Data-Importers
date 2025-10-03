@@ -1,17 +1,18 @@
 {
   "name": "Data::Importers",
-  "description": "Various data importing routines with a unified interface (import and slurp).",
-  "version": "0.1.6",
+  "description": "Various data importing and exporting routines with a unified interface (data-import/slurp & data-export/spurt).",
+  "version": "0.1.7",
   "perl": "6.d",
   "authors": [
     "Anton Antonov"
   ],
   "auth": "zef:antononcube",
   "depends": [
-    "JSON::Fast:ver<0.19+>",
-    "URI:ver<0.3.7+>:auth<zef:raku-community-modules>",
+    "Data::TypeSystem:ver<0.1.7+>:auth<zef:antononcube>:api<1>",
+    "HTTP::Tiny:ver<0.2.5+>:auth<zef:jjatria>",
     "Image::Markup::Utilities:ver<0.1.1+>:auth<zef:antononcube>:api<0>",
-    "HTTP::Tiny:ver<0.2.5+>:auth<zef:jjatria>"
+    "JSON::Fast:ver<0.19+>",
+    "URI:ver<0.3.7+>:auth<zef:raku-community-modules>"
   ],
   "build-depends": [],
   "test-depends": [],
@@ -29,8 +30,12 @@
   "tags": [
     "slurp",
     "slurps",
+    "spurt",
+    "spurts",
     "import",
     "imports",
+    "export",
+    "exports",
     "data",
     "url",
     "plaintext",
