@@ -25,7 +25,7 @@ The subs `slurp` and `data-import` can work with:
 
 - PDF files if ["PDF::Extract"](https://raku.land/zef:Tux/PDF::Extract), [SRp1], is installed
 
-The subs `spurt` and `data-export` can work with CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
+The subs `spurt` and `data-export` can work with CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed.
 
 **Remark:** Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
 
