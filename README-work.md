@@ -8,22 +8,24 @@
 
 ## In brief
 
-This repository is for a Raku package for the ingestion of different types of data
+This repository is for a Raku package for the import and export of different types of data
 from both URLs and files. Automatically deduces the data type from extensions.
 
-**Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding function `data-import` can be also used.
+**Remark:** The built-in subs `slurp` and `spurt` are overloaded by definitions of this package.
+The corresponding functions `data-import` and `data-export` can be also used.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name.
 
 (Currently) the recognized formats are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
 
-The functions `slurp` and `data-import` can work with:
+The subs `slurp` and `data-import` can work with:
 
-- CSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
+- CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
 
 - PDF files if ["PDF::Extract"](https://raku.land/zef:Tux/PDF::Extract), [SRp1], is installed
+
+The subs `spurt` and `data-export` can work with CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
 
 **Remark:** Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
 
@@ -156,7 +158,13 @@ $txt.lines[^6].join("\n")
 - [X] DONE Development
   - [X] DONE PDF ingestion
     - [X] DONE Files 
-    - [X] DONE URLs 
+    - [X] DONE URLs
+  - [ ] TODO Export to:
+    - [X] DONE JSON files
+    - [X] DONE text, Markdown, org, HTML, XML files
+    - [X] DONE CSV/TSV files
+    - [ ] TODO PDF files
+    - [ ] TODO Image files
 - [ ] TODO Unit tests
   - [ ] TODO PDF ingestion
     - Some initial tests are put in.

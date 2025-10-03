@@ -8,22 +8,24 @@
 
 ## In brief
 
-This repository is for a Raku package for the ingestion of different types of data
+This repository is for a Raku package for the import and export of different types of data
 from both URLs and files. Automatically deduces the data type from extensions.
 
-**Remark:** The built-in sub `slurp` is overloaded by definitions of this package.
-The corresponding function `data-import` can be also used.
+**Remark:** The built-in subs `slurp` and `spurt` are overloaded by definitions of this package.
+The corresponding functions `data-import` and `data-export` can be also used.
 
 The format of the data of the URLs or files can be specified with the named argument "format".
 If `format => Whatever` then the format of the data is implied by the extension of the given URL or file name.
 
 (Currently) the recognized formats are: CSV, HTML, JSON, Image (png, jpeg, jpg), PDF, Plaintext, Text, XML.
 
-The functions `slurp` and `data-import` can work with:
+The subs `slurp` and `data-import` can work with:
 
-- CSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
+- CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
 
 - PDF files if ["PDF::Extract"](https://raku.land/zef:Tux/PDF::Extract), [SRp1], is installed
+
+The subs `spurt` and `data-export` can work with CSV & TSV files if ["Text::CSV"](https://raku.land/zef:Tux/Text::CSV), [HMBp1], is installed
 
 **Remark:** Since "Text::CSV" is a "heavy" to install package, it is not included in the dependencies of this one.
 
@@ -150,7 +152,7 @@ use Data::Translators;
 ==> { $_.pick(10).sort({ $_<Package Item> }) }()
 ==> data-translation(field-names => <Package Item Title Rows Cols>)
 ```
-<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>USGasB</td><td>US Gasoline Market Data (1950-1987, Baltagi)</td><td>38</td><td>6</td></tr><tr><td>DAAG</td><td>fossum</td><td>Female Possum Measurements</td><td>43</td><td>14</td></tr><tr><td>Ecdat</td><td>OCC1950</td><td>Evolution of occupational distribution in the US</td><td>281</td><td>31</td></tr><tr><td>datasets</td><td>rivers</td><td>Lengths of Major North American Rivers</td><td>141</td><td>1</td></tr><tr><td>drc</td><td>daphnids</td><td>Daphnia test</td><td>16</td><td>4</td></tr><tr><td>drc</td><td>earthworms</td><td>Earthworm toxicity test</td><td>35</td><td>3</td></tr><tr><td>openintro</td><td>sp500_1950_2018</td><td>Daily observations for the S&amp;P 500</td><td>17346</td><td>7</td></tr><tr><td>openintro</td><td>unemploy_pres</td><td>President&#39;s party performance and unemployment rate</td><td>29</td><td>5</td></tr><tr><td>rpart</td><td>kyphosis</td><td>Data on Children who have had Corrective Spinal Surgery</td><td>81</td><td>4</td></tr><tr><td>stevedata</td><td>steves_clothes</td><td>Steve&#39;s (Professional) Clothes, as of March 3, 2019</td><td>79</td><td>4</td></tr></tbody></table>
+<table border="1"><thead><tr><th>Package</th><th>Item</th><th>Title</th><th>Rows</th><th>Cols</th></tr></thead><tbody><tr><td>AER</td><td>BenderlyZwick</td><td>Benderly and Zwick Data: Inflation, Growth and Stock Returns</td><td>31</td><td>5</td></tr><tr><td>Ecdat</td><td>Doctor</td><td>Number of Doctor Visits</td><td>485</td><td>4</td></tr><tr><td>Ecdat</td><td>StrikeNb</td><td>Number of Strikes in Us Manufacturing</td><td>108</td><td>3</td></tr><tr><td>Ecdat</td><td>nkill.byCountryYr</td><td>Global Terrorism Database yearly summaries</td><td>206</td><td>46</td></tr><tr><td>HSAUR</td><td>water</td><td>Mortality and Water Hardness</td><td>61</td><td>4</td></tr><tr><td>MASS</td><td>SP500</td><td>Returns of the Standard and Poors 500</td><td>2780</td><td>1</td></tr><tr><td>Stat2Data</td><td>Day1Survey</td><td>First Day Survey of Statistics Students</td><td>43</td><td>13</td></tr><tr><td>Stat2Data</td><td>Putts3</td><td>Hypothetical Putting Data (Short Form)</td><td>5</td><td>4</td></tr><tr><td>asaur</td><td>pharmacoSmoking</td><td>pharmacoSmoking</td><td>125</td><td>14</td></tr><tr><td>openintro</td><td>male_heights</td><td>Sample of 100 male heights</td><td>100</td><td>1</td></tr></tbody></table>
 
 
 ### PDF URL
@@ -163,9 +165,7 @@ my $txt = slurp('https://pdfobject.com/pdf/sample.pdf', format=>'text');
 say text-stats($txt);
 ```
 ```
-#ERROR: Must have the PDF::Extract module installed to do PDF file importing.
-#ERROR: You can do this by running 'zef install PDF::Extract'.
-# Nil
+# (chars => 2851 words => 416 lines => 38)
 ```
 
 **Remark:** The function `text-stats` is provided by this package, "Data::Importers". 
@@ -176,8 +176,12 @@ Here is a sample of the imported text:
 $txt.lines[^6].join("\n")
 ```
 ```
-#ERROR: No such method 'lines' for invocant of type 'Any'
-# Nil
+# Sample PDF
+# This is a simple PDF file. Fun fun fun.
+# Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus facilisis odio sed mi.
+# Curabitur suscipit. Nullam vel nisi. Etiam semper ipsum ut lectus. Proin aliquam, erat eget
+# pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit.
+# Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus.
 ```
 
 
@@ -188,7 +192,13 @@ $txt.lines[^6].join("\n")
 - [X] DONE Development
   - [X] DONE PDF ingestion
     - [X] DONE Files 
-    - [X] DONE URLs 
+    - [X] DONE URLs
+  - [ ] TODO Export to:
+    - [X] DONE JSON files
+    - [X] DONE text, Markdown, org, HTML, XML files
+    - [X] DONE CSV/TSV files
+    - [ ] TODO PDF files
+    - [ ] TODO Image files
 - [ ] TODO Unit tests
   - [ ] TODO PDF ingestion
     - Some initial tests are put in.
