@@ -38,8 +38,31 @@ sub to-triplet($row) {
     return [$row[0], $row[1], ($row.elems >= 3 ?? $row[2] !! 1)];
 }
 
-sub fmt-int-lines(@values, Int:D $width) {
-    my $per-line = (80 div $width) max 1;
+sub parse-fortran-format(Str:D $fmt) {
+    return Nil unless $fmt.trim.chars > 0;
+
+    my $f = $fmt.trim;
+    $f ~~ s/^\(//;
+    $f ~~ s/\)$//;
+    $f ~~ s:g/\s+//;
+
+    if $f ~~ /^ [ '+' | '-' ]? \d+ <[pP]> ',' (.*) $ / {
+        $f = ~$0;
+    }
+
+    if $f ~~ /^ (\d+)? (<[iIfFeEdDgG]>) (\d+) [ '.' (\d+) ]? [ <[eE]> [ '+' | '-' ]? \d+ ]? $ / {
+        return {
+            count => ($0 // 1).Int,
+            kind  => ~$1.uc,
+            width => $2.Int,
+            prec  => ($3 // 0).Int
+        };
+    }
+    Nil
+}
+
+sub fmt-int-lines(@values, Int:D $width, :$per-line = Nil) {
+    $per-line //= (80 div $width) max 1;
     my $fmt = '%' ~ $width ~ 'd';
 
     my @lines;
@@ -48,13 +71,13 @@ sub fmt-int-lines(@values, Int:D $width) {
         my $end = ($i + $per-line - 1) min (@values.elems - 1);
         my @batch = @values[$i .. $end];
         @lines.push(@batch.map({ sprintf($fmt, $_) }).join(''));
-        $i += $per-line;
+        $i += $per-line.Int;
     }
     return @lines;
 }
 
-sub fmt-real-lines(@values, Int:D $width = 26, Int:D $prec = 16) {
-    my $per-line = (80 div $width) max 1;
+sub fmt-real-lines(@values, Int:D $width = 26, Int:D $prec = 16, :$per-line = Nil) {
+    $per-line //= (80 div $width) max 1;
     my $fmt = '%' ~ $width ~ '.' ~ $prec ~ 'E';
 
     my @lines;
@@ -63,7 +86,7 @@ sub fmt-real-lines(@values, Int:D $width = 26, Int:D $prec = 16) {
         my $end = ($i + $per-line - 1) min (@values.elems - 1);
         my @batch = @values[$i .. $end];
         @lines.push(@batch.map({ sprintf($fmt, .Numeric) }).join(''));
-        $i += $per-line;
+        $i += $per-line.Int;
     }
     return @lines;
 }
@@ -71,6 +94,8 @@ sub fmt-real-lines(@values, Int:D $width = 26, Int:D $prec = 16) {
 multi sub export(IO::Path:D $file, $data) {
     die 'The argument $data is expected to be a list-like collection.'
     unless $data ~~ (Array:D | List:D | Seq:D);
+
+    my %hb-meta = $data.^can('hb-meta') ?? $data.hb-meta !! ();
 
     my @triplets = $data.map({ to-triplet($_) }).Array;
     die 'Cannot export an empty matrix.'
@@ -97,9 +122,11 @@ multi sub export(IO::Path:D $file, $data) {
         @norm.push([$i, $j, $x]);
     }
 
-    @norm = @norm.sort({
-        $^a[1] <=> $^b[1] || $^a[0] <=> $^b[0]
-    });
+    if !%hb-meta {
+        @norm = @norm.sort({
+            $^a[1] <=> $^b[1] || $^a[0] <=> $^b[0]
+        });
+    }
 
     my $nrow = @norm.map(*[0]).max;
     my $ncol = @norm.map(*[1]).max;
@@ -119,43 +146,60 @@ multi sub export(IO::Path:D $file, $data) {
 
     my $max-ptr = @colptr.max // 1;
     my $max-ind = @rowind.max // 1;
-    my $ptr-width = ($max-ptr.Str.chars max 5);
-    my $ind-width = ($max-ind.Str.chars max 5);
 
-    my $ptrfmt = "({ (80 div $ptr-width) max 1 }I{$ptr-width})";
-    my $indfmt = "({ (80 div $ind-width) max 1 }I{$ind-width})";
-    my $valfmt = $is-pattern ?? '' !! '(3E26.16)';
+    my $ptrfmt = %hb-meta<ptrfmt> // do {
+        my $ptr-width = ($max-ptr.Str.chars max 5);
+        "({ (80 div $ptr-width) max 1 }I{$ptr-width})";
+    };
+    my $indfmt = %hb-meta<indfmt> // do {
+        my $ind-width = ($max-ind.Str.chars max 5);
+        "({ (80 div $ind-width) max 1 }I{$ind-width})";
+    };
+    my $valfmt = do if $is-pattern {
+        ''
+    } else {
+        %hb-meta<valfmt> // '(3E26.16)'
+    };
 
-    my @ptr-lines = fmt-int-lines(@colptr, $ptr-width);
-    my @ind-lines = fmt-int-lines(@rowind, $ind-width);
+    my $ptrspec = parse-fortran-format($ptrfmt) // { width => ($max-ptr.Str.chars max 5), count => 1 };
+    my $indspec = parse-fortran-format($indfmt) // { width => ($max-ind.Str.chars max 5), count => 1 };
+    my $valspec = $valfmt.chars > 0
+            ?? (parse-fortran-format($valfmt) // { width => 26, prec => 16, count => 3 })
+            !! { width => 26, prec => 16, count => 3 };
+
+    my @ptr-lines = fmt-int-lines(@colptr, $ptrspec<width>.Int, :per-line($ptrspec<count>.Int));
+    my @ind-lines = fmt-int-lines(@rowind, $indspec<width>.Int, :per-line($indspec<count>.Int));
     my @val-lines;
     if !$is-pattern {
         if $is-complex {
             my @flat = @vals.map({ .re, .im }).flat;
-            @val-lines = fmt-real-lines(@flat);
+            @val-lines = fmt-real-lines(@flat, $valspec<width>.Int, $valspec<prec>.Int, :per-line($valspec<count>.Int));
         } else {
-            @val-lines = fmt-real-lines(@vals);
+            @val-lines = fmt-real-lines(@vals, $valspec<width>.Int, $valspec<prec>.Int, :per-line($valspec<count>.Int));
         }
     }
 
     my $ptrcrd = @ptr-lines.elems;
     my $indcrd = @ind-lines.elems;
     my $valcrd = @val-lines.elems;
-    my $rhscrd = 0;
-    my $totcrd = 4 + $ptrcrd + $indcrd + $valcrd + $rhscrd;
+    my $rhscrd = %hb-meta<rhscrd> // 0;
+    my $totcrd = $ptrcrd + $indcrd + $valcrd + $rhscrd;
 
-    my $mxtype = $is-pattern ?? 'PUA' !! ($is-complex ?? 'CUA' !! 'RUA');
+    my $mxtype = %hb-meta<mxtype> // ($is-pattern ?? 'PUA' !! ($is-complex ?? 'CUA' !! 'RUA'));
 
-    my $title = 'Created by Data::Exporters::HarwellBoeing';
-    my $key = 'RakuHB';
+    my $title = %hb-meta<title> // 'Created by Data::Exporters::HarwellBoeing';
+    my $key = %hb-meta<key> // 'RakuHB';
+    my $rhsfmt = %hb-meta<rhsfmt> // '';
+    my $neltvl = %hb-meta<neltvl> // 0;
 
     my @header = (
         sprintf('%-72s%-8s', $title, $key),
         sprintf('%14d%14d%14d%14d%14d', $totcrd, $ptrcrd, $indcrd, $valcrd, $rhscrd),
-        sprintf('%-3s%11d%14d%14d%14d', $mxtype, $nrow, $ncol, $nnzero, 0),
-        sprintf('%-16s%-16s%-20s%-20s', $ptrfmt, $indfmt, $valfmt, '')
+        sprintf('%-3s%11s%14d%14d%14d%14d', $mxtype, '', $nrow, $ncol, $nnzero, $neltvl),
+        sprintf('%-16s%-16s%-20s%-20s', $ptrfmt, $indfmt, $valfmt, $rhsfmt)
     );
 
-    my $content = (|@header, |@ptr-lines, |@ind-lines, |@val-lines).join("\n") ~ "\n";
+    my $content = (|@header, |@ptr-lines, |@ind-lines, |@val-lines).join("\n");
+    $content ~= "\n" if %hb-meta<has-trailing-newline> // True;
     return so spurt($file, $content);
 }

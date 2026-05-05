@@ -2,6 +2,10 @@ use v6.d;
 
 unit module Data::Importers::HarwellBoeing;
 
+class HBTriplets is Array {
+    has %.hb-meta;
+}
+
 #| Import file with matrix in Harwell–Boeing matrix.
 #| Returns a coordinate list (COO) of the (sparse) matrix.
 our proto sub import(
@@ -78,8 +82,14 @@ sub read-fixed-width-values(@lines, Str:D $fmt, Int:D $expected, :$integer = Fal
 }
 
 multi sub import(IO::Path:D $file, Bool:D :$dataset = False) {
-    my @lines = $file.lines;
+    my $raw = slurp($file);
+    my Bool $has-trailing-newline = $raw.ends-with("\n");
+    my @lines = $raw.lines;
     die "Harwell-Boeing file '$file' is too short." if @lines.elems < 4;
+
+    my $line1 = @lines[0] // '';
+    my $title = $line1.substr(0, 72).trim-trailing;
+    my $key = $line1.chars > 72 ?? $line1.substr(72, 8).trim-trailing !! '';
 
     my @line2 = @lines[1].words;
     die "Invalid Harwell-Boeing header line 2 in '$file'."
@@ -107,6 +117,7 @@ multi sub import(IO::Path:D $file, Bool:D :$dataset = False) {
     my $ptrfmt = @line4[0];
     my $indfmt = @line4[1];
     my $valfmt = @line4.elems >= 3 ?? @line4[2] !! '';
+    my $rhsfmt = @line4.elems >= 4 ?? @line4[3] !! '';
 
     my $offset = 4;
     my @ptr-lines = @lines[$offset ..^ ($offset + $ptrcrd)];
@@ -141,7 +152,7 @@ multi sub import(IO::Path:D $file, Bool:D :$dataset = False) {
     }
 
     # Import
-    my @triplets;
+    my $triplets = HBTriplets.new;
     for 1 .. $ncol -> $j {
         my $start = @colptr[$j - 1];
         my $end = @colptr[$j] - 1;
@@ -150,15 +161,29 @@ multi sub import(IO::Path:D $file, Bool:D :$dataset = False) {
         for $start .. $end -> $k {
             my $i = @rowind[$k - 1];
             my $x = @values[$k - 1];
-            @triplets.push([$i, $j, $x]);
+            $triplets.push([$i, $j, $x]);
         }
     }
 
+    $triplets.hb-meta<title> = $title;
+    $triplets.hb-meta<key> = $key;
+    $triplets.hb-meta<mxtype> = $mxtype;
+    $triplets.hb-meta<nrow> = $nrow;
+    $triplets.hb-meta<ncol> = $ncol;
+    $triplets.hb-meta<nnzero> = $nnzero;
+    $triplets.hb-meta<neltvl> = $neltvl;
+    $triplets.hb-meta<rhscrd> = $rhscrd;
+    $triplets.hb-meta<ptrfmt> = $ptrfmt;
+    $triplets.hb-meta<indfmt> = $indfmt;
+    $triplets.hb-meta<valfmt> = $valfmt;
+    $triplets.hb-meta<rhsfmt> = $rhsfmt;
+    $triplets.hb-meta<has-trailing-newline> = $has-trailing-newline;
+
     # Format
     if $dataset {
-        return @triplets.map({ <i j x>.Array Z=> $_.Array })».Hash.List;
+        return $triplets.map({ <i j x>.Array Z=> $_.Array })».Hash.List;
     }
-    return @triplets;
+    return $triplets;
 }
 
 multi sub import(Str:D $file, Bool:D :$dataset = False) {
