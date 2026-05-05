@@ -1,46 +1,50 @@
 {
-  "name": "Data::Importers",
-  "description": "Various data importing and exporting routines with a unified interface (data-import/slurp & data-export/spurt).",
-  "version": "0.1.7",
-  "perl": "6.d",
-  "authors": [
-    "Anton Antonov"
-  ],
-  "auth": "zef:antononcube",
-  "depends": [
-    "Data::TypeSystem:ver<0.1.7+>:auth<zef:antononcube>:api<1>",
-    "HTTP::Tiny:ver<0.2.5+>:auth<zef:jjatria>",
-    "Image::Markup::Utilities:ver<0.1.1+>:auth<zef:antononcube>:api<0>",
-    "JSON::Fast:ver<0.19+>",
-    "URI:ver<0.3.7+>:auth<zef:raku-community-modules>"
-  ],
-  "build-depends": [],
-  "test-depends": [],
-  "provides": {
-    "Data::Importers": "lib/Data/Importers.rakumod"
-  },
-  "resources": [
-    "simple.csv",
-    "simple.json",
-    "short.txt",
-    "simple.pdf",
-    "simple.tsv"
-  ],
-  "license": "Artistic-2.0",
-  "tags": [
-    "slurp",
-    "slurps",
-    "spurt",
-    "spurts",
-    "import",
-    "imports",
-    "export",
-    "exports",
-    "data",
-    "url",
-    "plaintext",
-    "html"
-  ],
-  "api": "1",
-  "source-url": "https://github.com/antononcube/Raku-Data-Importers.git"
+    "name": "Data::Importers",
+    "description": "Various data importing and exporting routines with a unified interface (data-import/slurp & data-export/spurt).",
+    "version": "0.1.8",
+    "authors": [
+        "Anton Antonov"
+    ],
+    "auth": "zef:antononcube",
+    "depends": [
+        "Data::TypeSystem:ver<0.1.7+>:auth<zef:antononcube>:api<1>",
+        "HTTP::Tiny:ver<0.2.5+>:auth<zef:jjatria>",
+        "Image::Markup::Utilities:ver<0.1.1+>:auth<zef:antononcube>:api<0>",
+        "JSON::Fast:ver<0.19+>",
+        "URI:ver<0.3.7+>:auth<zef:raku-community-modules>"
+    ],
+    "build-depends": [],
+    "provides": {
+        "Data::Importers": "lib/Data/Importers.rakumod",
+        "Data::Exporters::HarwellBoeing": "lib/Data/Exporters/HarwellBoeing.rakumod",
+        "Data::Importers::HarwellBoeing": "lib/Data/Importers/HarwellBoeing.rakumod"
+    },
+    "resources": [
+        "simple.csv",
+        "simple.json",
+        "short.txt",
+        "simple.pdf",
+        "simple.tsv",
+        "g05.rua",
+        "g10.rua",
+        "g20.rua"
+    ],
+    "license": "Artistic-2.0",
+    "tags": [
+        "slurp",
+        "slurps",
+        "spurt",
+        "spurts",
+        "import",
+        "imports",
+        "export",
+        "exports",
+        "data",
+        "url",
+        "plaintext",
+        "html",
+        "harwell-boeing"
+    ],
+    "api": "1",
+    "source-url": "https://github.com/antononcube/Raku-Data-Importers.git"
 }
