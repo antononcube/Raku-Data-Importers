@@ -1,5 +1,8 @@
 unit module Data::Importers;
 
+use Data::Importers::HarwellBoeing;
+use Data::Exporters::HarwellBoeing;
+
 use HTTP::Tiny;
 use Image::Markup::Utilities;
 use JSON::Fast;
@@ -202,6 +205,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
             when $_ ~~ /:i '.csv' $ / { 'csv' }
             when $_ ~~ /:i '.tsv' $ / { 'tsv' }
             when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
+            when $_ ~~ /:i '.' [hb | [r|c] [s|u|h|z|r] a ] $ / { 'harwell-boeing' }
             default { 'asis' }
         }
     }
@@ -215,7 +219,7 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
         }
     }
 
-    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml>;
+    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml harwell-boeing>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -259,6 +263,9 @@ multi sub import-file(IO::Path $file, :$format is copy = Whatever, *%args) {
                 note $!.^name;
                 die 'Cannot import PDF file. Is "PDF::Extract" installed?';
             }
+        }
+        when $_ ~~ /:i 'harwell-boeing' | hb | [r|c] [s|u|h|z|r] a  / {
+            return Data::Importers::HarwellBoeing::import($file, |%args)
         }
         when $_ ∈ <plaintext text txt asis> {
             return slurp($file);
@@ -331,6 +338,7 @@ multi sub export-file(IO::Path:D $file, $obj, :$format is copy = Whatever, *%arg
             when $_ ~~ /:i '.csv' $ / { 'csv' }
             when $_ ~~ /:i '.tsv' $ / { 'tsv' }
             when $_ ~~ /:i '.' [jpg | jpeg | png] $ / { 'image' }
+            when $_ ~~ /:i '.' [hb | [r|c] [s|u|h|z|r] a ] $ / { 'harwell-boeing' }
             default { 'asis' }
         }
     }
@@ -350,7 +358,7 @@ multi sub export-file(IO::Path:D $file, $obj, :$format is copy = Whatever, *%arg
         }
     }
 
-    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml>;
+    my @expectedFormats = <asis csv html image ipynb json md md-image org plaintext Rmd text tsv xml harwell-boeing>;
     die "The argument \$format is expected to be Whatever or one of: '{ @expectedFormats.join(', ') }'"
     unless $format ~~ Str:D && $format.lc ∈ @expectedFormats;
     $format = $format.lc;
@@ -383,6 +391,9 @@ multi sub export-file(IO::Path:D $file, $obj, :$format is copy = Whatever, *%arg
         }
         when $_ ∈ <plaintext text txt asis> {
             return spurt($file, $obj);
+        }
+        when $_ ~~ /:i 'harwell-boeing' | hb | [r|c] [s|u|h|z|r] a  / {
+            return Data::Exporters::HarwellBoeing::export($file, $obj)
         }
         default {
             die "Do not know what to do with the specified format.";
