@@ -7,6 +7,10 @@ use Data::TypeSystem;
 use Data::TypeSystem::Predicates;
 use URI;
 
+our sub resources {
+    %?RESOURCES
+}
+
 #============================================================
 # Check utilities
 #============================================================
