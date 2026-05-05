@@ -7,6 +7,7 @@ use Data::Exporters::HarwellBoeing;
 
 plan 2;
 
+# This test passes with "g05.rua" and "g20.rua" and fails with "g10.rua".
 my $src = Data::Importers::resources<g05.rua>.IO;
 my $out = $*TMPDIR.add("raku-data-importers-g05-roundtrip-{ now.Int }.rua");
 
