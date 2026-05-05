@@ -1,0 +1,17 @@
+use v6.d;
+
+use Test;
+use Data::Importers;
+use Data::Importers::HarwellBoeing;
+use Data::Exporters::HarwellBoeing;
+
+plan 2;
+
+my $src = Data::Importers::resources<g05.rua>.IO;
+my $out = $*TMPDIR.add("raku-data-importers-g05-roundtrip-{ now.Int }.rua");
+
+my $matrix = Data::Importers::HarwellBoeing::import($src.Str);
+ok Data::Exporters::HarwellBoeing::export($out.Str, $matrix), 'export returns True';
+is-deeply $out.slurp(:bin), $src.slurp(:bin), 'g05.rua round-trip is byte-identical';
+
+done-testing;
