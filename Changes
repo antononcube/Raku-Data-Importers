@@ -1,5 +1,8 @@
 Revision history for "Data::Importers"
 
+0.1.8 2026-05-05
+    - Implemented Harwell-Boeing importer and exporter routines.
+
 0.1.7 2025-10-03
     - Added the export function &data-export.
         - Also, overloaded &spurt.
